@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap" rel="stylesheet">
+  <title>🧙‍♂️ 易經數字卦占卜系統 | Fortune Byte</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="64gua.js"></script>
+  <script src="userlimit.js"></script>
+  <script src="time.js"></script>
+  <script src="lunarFun.js"></script>
+  <script src="main.js"></script>
+  
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f4f4ed;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    .section {
+      background: white;
+      padding: 20px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    button, a.button-link {
+      padding: 10px 14px;
+      margin-top: 10px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+    }
+    button:hover, a.button-link:hover {
+      background-color: #45a049;
+    }
+    textarea, input[type="number"] {
+      width: 300px;
+      font-size: 1em;
+      padding: 8px;
+      margin-top: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+    }
+    .output {
+      background: #fffaf0;
+      border: 1px solid #ccc;
+      padding: 15px;
+      font-family: 'Courier New', monospace;
+      border-radius: 6px;
+      color: #333;
+      white-space: pre-wrap;
+    }
+    .top-links {
+      text-align: right;
+      margin-bottom: 10px;
+    }
+
+  </style>
+  <script>
+    let db;
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        alert('請先登入！');
+        window.location.href = 'login.html';
+      } else {
+        db = firebase.firestore();
+      }
+    });
+  </script>
+</head>
+<body>
+	<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+	  <h1 style="margin: 0; font-size: 1.5em;">🔮 Fortune Byte 數字卦占卜系統</h1>
+		<div id="lunarTime" style="
+		  font-size: 1.1em;
+		  font-weight: bold;
+		  font-family: 'Noto Serif TC', serif;
+		  color: #774200;
+		  background-color: #fff8e1;
+		  padding: 6px 10px;
+		  border-radius: 6px;
+		  box-shadow: 0 0 5px rgba(0,0,0,0.05);
+		  white-space: nowrap;
+		">
+		</div>
+
+	  <div style="display: flex; gap: 10px;">
+		<a class="button-link" href="history.html">📜 我的占卜紀錄</a>
+		<button class="button-link" onclick="logout()">🚪 登出</button>
+	  </div>
+	</div>
+
+  <div class="section">
+    <h2>📘 卜卦須知</h2>
+    <p>使用易經數字卦前, 請注意以下事項, 以確保卦象準確並獲得有效指引:</p>
+    <ul>
+      <li><strong>誠心誠意</strong>: 問卦前請平心靜氣, 真誠面對問題, 避免隨意或嬉戲心態。</li>
+      <li><strong>問題清晰</strong>: 一次只問一個具體問題, 例如「我做某事結果如何」, 並避免模糊或多重問題。</li>
+      <li><strong>輸入數字</strong>: 請輸入三個三位數(100-999), 分別代表下卦、上卦與變爻。數字可隨機產生或自行選擇。</li>
+      <li><strong>解讀指引</strong>: 卦象提供方向而非絕對預測, 結果仍需結合您的行動與判斷。</li>
+      <li><strong>避免頻問</strong>: 同一問題不宜重複占卦, 建議間隔數日或待情況有變再問。</li>
+      <li><strong>每日限制</strong>: 每天最多只能使用三次，請珍惜占卦機會。</li>
+    </ul>
+  </div>
+
+  <div class="section">
+    <label>請輸入你的卜卦問題：</label><br>
+    <textarea id="question" rows="4"></textarea>
+  </div>
+
+  <div class="section">
+    <label>第一個三位數(下卦): <input type="number" id="num1"></label><br>
+    <label>第二個三位數(上卦): <input type="number" id="num2"></label><br>
+    <label>第三個三位數(變爻): <input type="number" id="num3"></label><br>
+	<button onclick="generateRandom()">隨機</button>
+    <button onclick="calculateHexagram()">👉 啟動占卜 · 請示易神 </button>			
+	<label><input type="checkbox" id="noAutoSend"> 自行解讀 </label>
+
+  </div>
+
+  <div class="section">
+    <h2>🧾 占卜結果</h2>
+    <div id="result" class="output"></div>
+  </div>
+
+
+  
+  <script>
+	let lastPrompt = ''; // 全域儲存
+
+	function openInChatGPT() {
+	  if (!lastPrompt) {
+		alert("請先計算卦象，再送出至 ChatGPT。");
+		return;
+	  }
+
+	  const encoded = encodeURIComponent(lastPrompt);
+	  const chatGPTUrl = `https://chat.openai.com/?prompt=${encoded}`;
+	  const noSend = document.getElementById("noAutoSend").checked;
+	  if (!noSend) {
+		window.open(chatGPTUrl, '_blank');
+	  }
+	}
+	function copyResult() {
+	  const resultText = document.getElementById("result").textContent;
+	  navigator.clipboard.writeText(resultText).then(() => {
+		alert("已複製占卜結果！");
+	  });
+	}
+
+    function generateRandom() {
+
+		const [n1, n2, n3] = getTimeBasedNumbers();
+		document.getElementById("num1").value = n1;
+		document.getElementById("num2").value = n2;
+		document.getElementById("num3").value = n3;	  		
+	  
+    }
+	
+    function calculateHexagram() {
+      const user = firebase.auth().currentUser;
+      if (!user || !db) return;
+	  if (!checkUsageLimit()) return;
+
+      const q = document.getElementById("question").value.trim();
+	  let n1Raw = document.getElementById("num1").value;
+	  let n2Raw = document.getElementById("num2").value;
+	  let n3Raw = document.getElementById("num3").value;
+
+	  const allEmpty = !n1Raw && !n2Raw && !n3Raw;
+	  const anyFilled = n1Raw || n2Raw || n3Raw;
+	  const allFilled = n1Raw && n2Raw && n3Raw;
+
+	  if (anyFilled && !allFilled) {
+		alert("請填寫完整三個三位數，或三個都留空使用隨機值！");
+		return;
+	  }
+
+	  let n1 = parseInt(n1Raw);
+	  let n2 = parseInt(n2Raw);
+	  let n3 = parseInt(n3Raw);
+
+
+      const lower = n1 % 8;
+      const upper = n2 % 8;
+      const changeIndex = (n3 % 6 || 6) - 1;
+
+      const trigramBinary = ['111','000','001','010','011','100','101','110'];
+      const trigramNames = ['地','天','澤','火','雷','風','水','山'];
+
+      const lowerBinary = trigramBinary[lower];
+      const upperBinary = trigramBinary[upper];
+
+      const lines = [...lowerBinary, ...upperBinary].map(x => parseInt(x));
+      const originalLines = [...lines];
+      lines[changeIndex] = lines[changeIndex] ? 0 : 1;
+
+      const lowerName = trigramNames[lower];
+      const upperName = trigramNames[upper];
+      const changedLower = trigramBinary.indexOf(lines.slice(0, 3).join(""));
+      const changedUpper = trigramBinary.indexOf(lines.slice(3).join(""));
+
+      const changedLowerName = trigramNames[changedLower];
+      const changedUpperName = trigramNames[changedUpper];
+
+      const baseKey = `${upperName}${lowerName}`;
+      const changedKey = `${changedUpperName}${changedLowerName}`;
+
+      const baseGuaNum = hexagramsMapping[baseKey]?.number;
+      const changedGuaNum = hexagramsMapping[changedKey]?.number;
+
+      const baseJsonKey = Object.keys(guaData).find(k => k.startsWith(baseGuaNum.toString().padStart(2, '0')));
+      const changedJsonKey = Object.keys(guaData).find(k => k.startsWith(changedGuaNum.toString().padStart(2, '0')));
+
+      const baseGua = guaData[baseJsonKey];
+      const changedGua = guaData[changedJsonKey];
+      const baseYaoName = Object.keys(baseGua["爻辭"])[changeIndex];
+      const yaoText = baseGua["爻辭"][baseYaoName];
+
+	  const result = `
+	你現在是熟悉易經梅花易數數字卦的專家，請根據我的問題進行解析
+	嚴格遵循不誠不占、不義不占、不疑不占
+	如果有上述三不占情況，請不要幫我占卜
+
+	我想問 ${q || '...'} 這件事，
+	📘 占得 ${baseJsonKey} ${baseYaoName}
+	卦辭：${baseGua?.卦辭 || ''}
+	爻辭：${yaoText || '無資料'}		
+	之卦：${changedJsonKey}
+
+	👉請以下列的格式回答，每個格式請精簡扼要的回答
+	🔮 問題解析
+	📘 本卦解析
+	🔁 變爻解析
+	📙 之卦解析
+	🧙‍♂️ 總結與建議
+		`;
+      
+
+      document.getElementById("result").innerHTML = result.replace(/\n/g, "<br>");
+	  lastPrompt = result;
+	  openInChatGPT();
+	  incrementUsage();
+
+      db.collection("divinationRecords").add({
+        uid: user.uid,
+        email: user.email,
+        question: q,
+        num1: n1,
+        num2: n2,
+        num3: n3,
+        baseGua: baseJsonKey,
+        changedGua: changedJsonKey,
+        yao: baseYaoName,        
+        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+      }).then(() => {
+        console.log("占卜紀錄已儲存");
+      }).catch(error => {
+        console.error("紀錄失敗：", error);
+      });
+    }
+  </script>
+</body>
+  <footer style="text-align:center; margin-top: 50px; font-family: serif; font-size: 0.95em; color: #444;">
+    <p>天機自顯 · 本頁訪客人數：</p>
+    <div id="sfcm8akhqesh2eeqj8xa4dhjusj43wh7jxf"></div>
+    <script type="text/javascript" src="https://counter4.optistats.ovh/private/counter.js?c=m8akhqesh2eeqj8xa4dhjusj43wh7jxf&down=async" async></script>
+    <noscript>
+      <a href="https://www.freecounterstat.com" title="web counter">
+        <img src="https://counter4.optistats.ovh/private/freecounterstat.php?c=m8akhqesh2eeqj8xa4dhjusj43wh7jxf" border="0" title="web counter" alt="web counter">
+      </a>
+    </noscript>
+  </footer>
+	
+</html>

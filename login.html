@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Login | Fortune Byte 易算</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <script src="main.js" defer></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      margin: 0;
+      background: linear-gradient(to bottom, #fdfcf8, #e8e4d9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .login-container {
+      background: #ffffffcc;
+      padding: 30px 40px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    .login-container img {
+      width: 120px;
+      margin-bottom: 10px;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.8em;
+      color: #333;
+    }
+    input[type="email"], input[type="password"] {
+      width: 260px;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+    }
+    button {
+      padding: 10px 18px;
+      margin: 10px 5px;
+      font-size: 1em;
+      border: none;
+      border-radius: 6px;
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+    .footer {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <img src="icon.png" alt="Fortune Byte Logo">
+    <h2>登入 Fortune Byte 易算</h2>
+    <div>
+      <input type="email" id="email" placeholder="Email"><br>
+      <input type="password" id="password" placeholder="Password"><br>
+      <button onclick="emailLogin()">登入</button>
+      <button onclick="emailRegister()">註冊</button>
+	  <button class="link-button" onclick="resetPassword()">忘記密碼？</button>
+    </div>
+    <hr style="margin: 20px 0;">
+    <button onclick="googleLogin()">使用 Google 登入</button>
+    <div class="footer">© Fortune Byte 易算</div>
+  </div>
+</body>
+</html>

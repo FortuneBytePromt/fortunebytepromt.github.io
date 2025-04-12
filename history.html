@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>📜 我的占卜紀錄 | Fortune Byte</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: #f5f5f0;
+      margin: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .record {
+      background: white;
+      margin: 10px auto;
+      padding: 15px;
+      border-radius: 10px;
+      max-width: 700px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    .record p {
+      margin: 5px 0;
+    }
+    .timestamp {
+      color: #888;
+      font-size: 0.9em;
+    }
+  </style>
+</head>
+<body>
+  <h1>📜 我的占卜紀錄</h1>
+  <div id="records"></div>
+
+  <script>
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        alert('請先登入查看紀錄');
+        window.location.href = 'index.html';
+      } else {
+        const db = firebase.firestore();
+        const recordsRef = db.collection("divinationRecords").where("uid", "==", user.uid);
+
+        recordsRef.get().then(snapshot => {
+          const records = [];
+          snapshot.forEach(doc => {
+            records.push(doc.data());
+          });
+
+          // 前端排序：依 timestamp 降冪排序
+          records.sort((a, b) => {
+            const ta = a.timestamp?.toDate?.().getTime?.() || 0;
+            const tb = b.timestamp?.toDate?.().getTime?.() || 0;
+            return tb - ta;
+          });
+
+          const container = document.getElementById("records");
+          if (records.length === 0) {
+            container.innerHTML = '<p style="text-align:center; color:#888;">尚無占卜紀錄</p>';
+            return;
+          }
+
+          records.forEach(data => {
+            const div = document.createElement("div");
+            div.className = "record";
+            const time = data.timestamp?.toDate().toLocaleString() || "(無時間)";
+            div.innerHTML = `
+              <p><strong>🧠 問題：</strong> ${data.question || '（無內容）'}</p>
+              <p><strong>🔢 三數：</strong> ${data.num1}, ${data.num2}, ${data.num3}</p>
+              <p><strong>📘 卦象：</strong> ${data.baseGua} ${data.yao} → ${data.changedGua}</p>              
+              <p class="timestamp">🕒 ${time}</p>
+            `;
+            container.appendChild(div);
+          });
+        }).catch(err => {
+          alert("讀取紀錄錯誤：" + err.message);
+        });
+      }
+    });
+  </script>
+</body>
+</html>
