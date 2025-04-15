@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>📜 我的占卜紀錄 | Fortune Byte</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -13,9 +14,49 @@
       background: #f5f5f0;
       margin: 20px;
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 30px;
+    .header-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .header-bar h1 {
+      margin: 0;
+      font-size: 1.5em;
+      flex-grow: 1;
+    }
+    .back-link {
+      text-decoration: none;
+      background-color: #607d8b;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.95em;
+      white-space: nowrap;
+    }
+    #searchBox {
+      padding: 8px 12px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: 1px solid #aaa;
+      flex-grow: 2;
+      max-width: 300px;
+    }
+    @media (max-width: 600px) {
+      .header-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      #searchBox {
+        width: 100%;
+        max-width: none;
+      }
+      .back-link {
+        width: 100%;
+        text-align: center;
+      }
     }
     .record {
       background: white;
@@ -24,6 +65,11 @@
       border-radius: 10px;
       max-width: 700px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: transform 0.2s ease, box-shadow 0.3s ease;
+    }
+    .record:hover {
+      transform: scale(1.01);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
     .record p {
       margin: 5px 0;
@@ -32,57 +78,173 @@
       color: #888;
       font-size: 0.9em;
     }
+    .delete-button, .feedback-button, .retry-button {
+      color: white;
+      border: none;
+      padding: 6px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 5px;
+      font-size: 0.9em;
+      margin-right: 5px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    .delete-button {
+      background-color: #e53935;
+    }
+    .delete-button:hover {
+      background-color: #c62828;
+      transform: scale(1.05);
+    }
+    .feedback-button.correct {
+      background-color: #6a1b9a;
+    }
+    .feedback-button.incorrect {
+      background-color: #00897b;
+    }
+    .feedback-button.correct:hover {
+      background-color: #4a148c;
+      transform: scale(1.05);
+    }
+    .feedback-button.incorrect:hover {
+      background-color: #00695c;
+      transform: scale(1.05);
+    }
+    .retry-button {
+      background-color: #3949ab;
+    }
+    .retry-button:hover {
+      background-color: #1e3d8f;
+      transform: scale(1.05);
+    }
+    .active-feedback {
+      outline: 2px solid #222;
+      box-shadow: 0 0 0 2px #fff inset;
+    }
   </style>
 </head>
 <body>
-  <h1>📜 我的占卜紀錄</h1>
+  <div class="header-bar">
+    <h1>📜 占卜紀錄</h1>
+    <input id="searchBox" type="text" placeholder="🔍 搜尋問題...">
+    <a href="fortune.html" class="back-link">🔙 回主頁</a>
+  </div>
+
   <div id="records"></div>
+  <div id="loading" style="text-align:center; color:#888; margin:20px;">載入中...</div>
+
 
   <script>
+    let lastVisible = null;
+    let loading = false;
+    const pageSize = 10;
+    let userRef = null;
+
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         alert('請先登入查看紀錄');
         window.location.href = 'index.html';
       } else {
         const db = firebase.firestore();
-        const recordsRef = db.collection("divinationRecords").where("uid", "==", user.uid);
+        userRef = db.collection("divinationRecords")
+                    .where("uid", "==", user.uid)
+                    .orderBy("timestamp", "desc");
 
-        recordsRef.get().then(snapshot => {
-          const records = [];
-          snapshot.forEach(doc => {
-            records.push(doc.data());
-          });
-
-          // 前端排序：依 timestamp 降冪排序
-          records.sort((a, b) => {
-            const ta = a.timestamp?.toDate?.().getTime?.() || 0;
-            const tb = b.timestamp?.toDate?.().getTime?.() || 0;
-            return tb - ta;
-          });
-
-          const container = document.getElementById("records");
-          if (records.length === 0) {
-            container.innerHTML = '<p style="text-align:center; color:#888;">尚無占卜紀錄</p>';
-            return;
-          }
-
-          records.forEach(data => {
-            const div = document.createElement("div");
-            div.className = "record";
-            const time = data.timestamp?.toDate().toLocaleString() || "(無時間)";
-            div.innerHTML = `
-              <p><strong>🧠 問題：</strong> ${data.question || '（無內容）'}</p>
-              <p><strong>🔢 三數：</strong> ${data.num1}, ${data.num2}, ${data.num3}</p>
-              <p><strong>📘 卦象：</strong> ${data.baseGua} ${data.yao} → ${data.changedGua}</p>              
-              <p class="timestamp">🕒 ${time}</p>
-            `;
-            container.appendChild(div);
-          });
-        }).catch(err => {
-          alert("讀取紀錄錯誤：" + err.message);
-        });
+        loadMore();
+        window.addEventListener('scroll', handleScroll);
+        document.getElementById("searchBox").addEventListener("input", handleSearch);
       }
     });
+
+    function loadMore() {
+      if (loading || !userRef) return;
+      loading = true;
+      document.getElementById("loading").style.display = "block";
+
+      let query = userRef.limit(pageSize);
+      if (lastVisible) query = query.startAfter(lastVisible);
+
+      query.get().then(snapshot => {
+        const container = document.getElementById("records");
+        if (snapshot.empty) {
+          document.getElementById("loading").textContent = "已載入所有紀錄";
+          window.removeEventListener('scroll', handleScroll);
+          return;
+        }
+
+        snapshot.forEach(doc => {
+          const data = doc.data();
+          data._id = doc.id;
+          const div = document.createElement("div");
+          div.className = "record";
+          const time = data.timestamp?.toDate().toLocaleString() || "(無時間)";
+          div.innerHTML = `
+            <p><strong>🧠 問題：</strong> ${data.question || '（無內容）'}</p>
+            <p><strong>📘 卦象：</strong> ${data.baseGua}（${data.yao}）→ ${data.changedGua}</p>
+            <p class="timestamp">🕒 ${time}</p>
+            <button class="feedback-button correct ${data.feedback === '準' ? 'active-feedback' : ''}" onclick="submitFeedback('${data._id}', '準', this)">🔮 靈驗</button>
+            <button class="feedback-button incorrect ${data.feedback === '不準' ? 'active-feedback' : ''}" onclick="submitFeedback('${data._id}', '不準', this)">🌫️ 未應</button>
+            <button class="retry-button" onclick="reopenChatGPT('${data.question}', '${data.baseGua}', '${data.yao}', '${data.changedGua}')">📖 重看解析</button>
+            <button class="delete-button" onclick="deleteRecord('${data._id}', this)">🗑️ 刪除</button>
+          `;
+          container.appendChild(div);
+        });
+
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        loading = false;
+        document.getElementById("loading").style.display = "none";
+      }).catch(err => {
+        alert("讀取紀錄錯誤：" + err.message);
+        loading = false;
+      });
+    }
+
+    function handleScroll() {
+      const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+      if (scrollTop + clientHeight >= scrollHeight - 100) {
+        loadMore();
+      }
+    }
+
+    function handleSearch() {
+      const keyword = document.getElementById("searchBox").value.toLowerCase();
+      const records = document.querySelectorAll(".record");
+      records.forEach(record => {
+        const question = record.querySelector("p").textContent.toLowerCase();
+        record.style.display = question.includes(keyword) ? "block" : "none";
+      });
+    }
+
+    function deleteRecord(id, btn) {
+      if (confirm("確定要刪除這筆紀錄嗎？")) {
+        firebase.firestore().collection("divinationRecords").doc(id).delete().then(() => {
+          btn.parentElement.remove();
+        }).catch(err => {
+          alert("刪除失敗：" + err.message);
+        });
+      }
+    }
+
+    function submitFeedback(id, feedback, btn) {
+      firebase.firestore().collection("divinationRecords").doc(id).update({
+        feedback: feedback
+      }).then(() => {
+        const parent = btn.parentElement;
+        const correctBtn = parent.querySelector(".feedback-button.correct");
+        const incorrectBtn = parent.querySelector(".feedback-button.incorrect");
+        correctBtn.classList.remove("active-feedback");
+        incorrectBtn.classList.remove("active-feedback");
+        btn.classList.add("active-feedback");
+      }).catch(err => {
+        alert("提交失敗：" + err.message);
+      });
+    }
+
+    function reopenChatGPT(question, baseGua, yao, changedGua) {
+      const prompt = `你現在是熟悉易經梅花易數數字卦的專家，請重新解析：\n\n🔮 問題：「${question}」\n📘 本卦：${baseGua}\n🔁 變爻：${yao}\n📙 之卦：${changedGua}\n\n請依以下格式回覆：\n🔮 問題解析\n📘 本卦解釋\n🔁 變爻解析\n📙 之卦說明\n🧙‍♂️ 總結與建議`;
+      const encoded = encodeURIComponent(prompt);
+      window.open(`https://chat.openai.com/?prompt=${encoded}`, '_blank');
+    }
   </script>
 </body>
 </html>

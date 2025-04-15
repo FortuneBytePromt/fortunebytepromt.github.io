@@ -17,7 +17,7 @@
     }
     function checkUsageLimit() {
       const usage = getUsageData();
-      if (usage.count >= 99) {
+      if (usage.count >= 5) {
         alert("⚠️ 今天的占卦次數已用完，請明天再試！");
         return false;
       }

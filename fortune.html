@@ -2,6 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC&display=swap" rel="stylesheet">
   <title>🧙‍♂️ 易經數字卦占卜系統 | Fortune Byte</title>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
@@ -43,7 +44,8 @@
       background-color: #45a049;
     }
     textarea, input[type="number"] {
-      width: 300px;
+      width: 100%;
+      max-width: 400px;
       font-size: 1em;
       padding: 8px;
       margin-top: 8px;
@@ -59,11 +61,34 @@
       color: #333;
       white-space: pre-wrap;
     }
-    .top-links {
-      text-align: right;
-      margin-bottom: 10px;
+    .top-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
     }
-
+    .lunar-box {
+      font-size: 1.1em;
+      font-weight: bold;
+      font-family: 'Noto Serif TC', serif;
+      color: #774200;
+      background-color: #fff8e1;
+      padding: 6px 10px;
+      border-radius: 6px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.05);
+      white-space: nowrap;
+    }
+    @media (max-width: 600px) {
+      .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .top-bar > * {
+        width: 100%;
+        text-align: center;
+      }
+    }
   </style>
   <script>
     let db;
@@ -78,22 +103,10 @@
   </script>
 </head>
 <body>
-	<div style="display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+	<div class="top-bar">
 	  <h1 style="margin: 0; font-size: 1.5em;">🔮 Fortune Byte 數字卦占卜系統</h1>
-		<div id="lunarTime" style="
-		  font-size: 1.1em;
-		  font-weight: bold;
-		  font-family: 'Noto Serif TC', serif;
-		  color: #774200;
-		  background-color: #fff8e1;
-		  padding: 6px 10px;
-		  border-radius: 6px;
-		  box-shadow: 0 0 5px rgba(0,0,0,0.05);
-		  white-space: nowrap;
-		">
-		</div>
-
-	  <div style="display: flex; gap: 10px;">
+	  <div id="lunarTime" class="lunar-box"></div>
+	  <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
 		<a class="button-link" href="history.html">📜 我的占卜紀錄</a>
 		<button class="button-link" onclick="logout()">🚪 登出</button>
 	  </div>
@@ -124,15 +137,12 @@
 	<button onclick="generateRandom()">隨機</button>
     <button onclick="calculateHexagram()">👉 啟動占卜 · 請示易神 </button>			
 	<label><input type="checkbox" id="noAutoSend"> 自行解讀 </label>
-
   </div>
 
   <div class="section">
     <h2>🧾 占卜結果</h2>
     <div id="result" class="output"></div>
   </div>
-
-
   
   <script>
 	let lastPrompt = ''; // 全域儲存
@@ -255,9 +265,6 @@
         uid: user.uid,
         email: user.email,
         question: q,
-        num1: n1,
-        num2: n2,
-        num3: n3,
         baseGua: baseJsonKey,
         changedGua: changedJsonKey,
         yao: baseYaoName,        
@@ -280,5 +287,4 @@
       </a>
     </noscript>
   </footer>
-	
 </html>
