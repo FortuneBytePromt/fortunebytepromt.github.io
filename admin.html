@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🔍 後台總覽 - 最近占卜紀錄</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+      background-color: #f9f9f9;
+    }
+    h1 {
+      text-align: center;
+    }
+    .record {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      padding: 12px;
+      margin: 10px 0;
+    }
+    .record p {
+      margin: 6px 0;
+    }
+    .button {
+      background-color: #4CAF50;
+      color: white;
+      padding: 6px 10px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.9em;
+    }
+    .button:hover {
+      background-color: #388e3c;
+    }
+  </style>
+</head>
+<body>
+  <h1>📜 最近 100 筆占卜紀錄</h1>
+  <div id="recordList"></div>
+
+  <script>
+    const adminUIDs = ['fLhFeaiYwsVhDJ0O3ozFWbo2Qv22']; // 你的 admin UID
+
+    firebase.auth().onAuthStateChanged(async user => {
+      if (!user || !adminUIDs.includes(user.uid)) {
+        alert("您無權查看此頁面");
+        return;
+      }
+      const db = firebase.firestore();
+      const container = document.getElementById("recordList");
+
+      const snapshot = await db.collection("divinationRecords")
+        .orderBy("timestamp", "desc")
+        .limit(100)
+        .get();
+
+      snapshot.forEach(doc => {
+        const d = doc.data();
+        const div = document.createElement("div");
+        div.className = "record";
+        const time = d.timestamp?.toDate()?.toLocaleString() || "(無時間)";
+
+        div.innerHTML = `
+          <p><strong>🧠 問題：</strong> ${d.question || '（無內容）'}</p>
+          <p><strong>📘 卦象：</strong> ${d.baseGua} ${d.yao} → ${d.changedGua}</p>
+          <p><strong>📧 使用者：</strong> ${d.email || '(匿名)'}</p>
+          <p><strong>🕒 時間：</strong> ${time}</p>
+          <button class="button" onclick="sendToChatGPT('${encodeURIComponent(d.question)}','${d.baseGua}','${d.yao}','${d.changedGua}')">🔮 問 ChatGPT</button>
+        `;
+        container.appendChild(div);
+      });
+    });
+
+    function sendToChatGPT(question, baseGua, yao, changedGua) {
+      const prompt = `你現在是熟悉易經梅花易數數字卦的專家，請根據我的問題進行解析\n我想問 ${decodeURIComponent(question)} 這件事，\n📘 占得 ${baseGua} ${yao}\n之卦：${changedGua}\n👉請以下列格式回答：🔮 問題解析 📘 本卦解釋 🔁 變爻解析 📙 之卦說明 🧙‍♂️ 總結與建議`;
+      window.open("https://chat.openai.com/?prompt=" + encodeURIComponent(prompt), "_blank");
+    }
+  </script>
+</body>
+</html>
