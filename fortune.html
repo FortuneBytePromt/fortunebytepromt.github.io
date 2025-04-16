@@ -176,7 +176,7 @@
 	  
     }
 	
-    function calculateHexagram() {
+    async function calculateHexagram() {
       const user = firebase.auth().currentUser;
       if (!user || !db) return;
 	  const ok = await checkUsageLimitByUID();
