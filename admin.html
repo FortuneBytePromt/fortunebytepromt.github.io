@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔍 後台總覽 - 最近占卜紀錄</title>
+  <title>📊 後台總攬</title>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
@@ -11,76 +11,155 @@
   <style>
     body {
       font-family: sans-serif;
-      padding: 20px;
-      background-color: #f9f9f9;
+      background: #f4f4f4;
+      margin: 20px;
     }
     h1 {
       text-align: center;
     }
-    .record {
-      background: #fff;
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+    th {
+      background-color: #eee;
+    }
+    .highlight {
+      background-color: #ffe0e0;
+      font-weight: bold;
+    }
+    #searchBox {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px;
+      margin: 20px auto;
+      display: block;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+    .record-block {
+      background: white;
+      margin: 10px auto;
+      padding: 15px;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      padding: 12px;
-      margin: 10px 0;
-    }
-    .record p {
-      margin: 6px 0;
-    }
-    .button {
-      background-color: #4CAF50;
-      color: white;
-      padding: 6px 10px;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-      font-size: 0.9em;
-    }
-    .button:hover {
-      background-color: #388e3c;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      max-width: 800px;
+      white-space: pre-wrap;
     }
   </style>
 </head>
 <body>
-  <h1>📜 最近 100 筆占卜紀錄</h1>
-  <div id="recordList"></div>
-
+  <h1>📊 占卜系統後台總覽</h1>
+  <input id="searchBox" type="text" placeholder="🔍 輸入 email 查詢該使用者所有占卜記錄...">
+  <button id="loadBtn">🔄 立即統計使用狀況</button>
+  <div id="userStats"><p>📦 目前共 0 筆占卜紀錄，今日使用者人數：0 人</p></div>
+  <table id="userTable">
+    <thead>
+      <tr>
+        <th>Email</th>
+        <th>UID</th>
+        <th>今日次數</th>
+        <th>最後使用時間</th>
+      </tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="searchResult"></div>
   <script>
-    const adminUIDs = ['fLhFeaiYwsVhDJ0O3ozFWbo2Qv22']; // 你的 admin UID
+    const ADMIN_UID = "fLhFeaiYwsVhDJ0O3ozFWbo2Qv22";
+    let allRecords = [];
 
     firebase.auth().onAuthStateChanged(async user => {
-      if (!user || !adminUIDs.includes(user.uid)) {
-        alert("您無權查看此頁面");
+      if (!user || user.uid !== ADMIN_UID) {
+        alert("無權限");
+        location.href = "index.html";
         return;
       }
       const db = firebase.firestore();
-      const container = document.getElementById("recordList");
+      allRecords = (await db.collection("divinationRecords").get()).docs;
+      document.getElementById("userStats").innerHTML = `<p>📦 目前共 ${allRecords.length} 筆占卜紀錄，今日使用者人數：？ 人</p>`;
 
-      const snapshot = await db.collection("divinationRecords")
-        .orderBy("timestamp", "desc")
-        .limit(100)
-        .get();
+      document.getElementById("loadBtn").addEventListener("click", () => loadStatistics(db));
 
-      snapshot.forEach(doc => {
-        const d = doc.data();
-        const div = document.createElement("div");
-        div.className = "record";
-        const time = d.timestamp?.toDate()?.toLocaleString() || "(無時間)";
+      document.getElementById("searchBox").addEventListener("change", async (e) => {
+        const keyword = e.target.value.trim().toLowerCase();
+        const resultBox = document.getElementById("searchResult");
+        resultBox.innerHTML = "";
+        if (!keyword) return;
 
-        div.innerHTML = `
-          <p><strong>🧠 問題：</strong> ${d.question || '（無內容）'}</p>
-          <p><strong>📘 卦象：</strong> ${d.baseGua} ${d.yao} → ${d.changedGua}</p>
-          <p><strong>📧 使用者：</strong> ${d.email || '(匿名)'}</p>
-          <p><strong>🕒 時間：</strong> ${time}</p>
-          <button class="button" onclick="sendToChatGPT('${encodeURIComponent(d.question)}','${d.baseGua}','${d.yao}','${d.changedGua}')">🔮 問 ChatGPT</button>
-        `;
-        container.appendChild(div);
+        const result = await db.collection("divinationRecords").where("email", "==", keyword).orderBy("timestamp", "desc").limit(100).get();
+        if (result.empty) {
+          resultBox.innerHTML = `<p style='text-align:center;color:#777;'>找不到該使用者資料</p>`;
+          return;
+        }
+
+        result.docs.forEach(doc => {
+          const d = doc.data();
+          const q = d.question || "(無內容)";
+          const base = d.baseGua;
+          const yao = d.yao;
+          const changed = d.changedGua;
+          const guaData = `你現在是熟悉易經梅花易數數字卦的專家，請根據我的問題進行解析\n嚴格遵循不誠不占、不義不占、不疑不占\n如果有上述三不占情況，請不要幫我占卜\n\n我想問 ${q} 這件事，\n📘 占得 ${base} ${yao}\n之卦：${changed}\n\n👉請以下列的格式回答，每個格式請精簡扼要的回答\n🔮 問題解析\n📘 本卦解析\n🔁 變爻解析\n📙 之卦解析\n🧙‍♂️ 總結與建議`;
+
+          const block = document.createElement("div");
+          const time = d.timestamp?.toDate().toLocaleString() || "";
+          const line = `🧠 ${q}\n📘 ${base} ${yao} → ${changed}\n🕒 ${time}`;
+          block.className = "record-block";
+          block.innerHTML = `${line.replaceAll("\n", "<br>")}<br><br><a target="_blank" href="https://chat.openai.com/?prompt=${encodeURIComponent(guaData)}">🧠 發問至 ChatGPT</a>`;
+          resultBox.appendChild(block);
+        });
       });
     });
 
-    function sendToChatGPT(question, baseGua, yao, changedGua) {
-      const prompt = `你現在是熟悉易經梅花易數數字卦的專家，請根據我的問題進行解析\n我想問 ${decodeURIComponent(question)} 這件事，\n📘 占得 ${baseGua} ${yao}\n之卦：${changedGua}\n👉請以下列格式回答：🔮 問題解析 📘 本卦解釋 🔁 變爻解析 📙 之卦說明 🧙‍♂️ 總結與建議`;
-      window.open("https://chat.openai.com/?prompt=" + encodeURIComponent(prompt), "_blank");
+    async function loadStatistics(db) {
+      const todayStart = new Date();
+      todayStart.setHours(0, 0, 0, 0);
+
+      const userMap = new Map();
+
+      allRecords.forEach(doc => {
+        const data = doc.data();
+        const uid = data.uid;
+        const email = data.email || "(無email)";
+        const timestamp = data.timestamp?.toDate?.();
+        if (!userMap.has(uid)) {
+          userMap.set(uid, {
+            email,
+            uid,
+            countToday: 0,
+            lastTime: timestamp
+          });
+        }
+        const user = userMap.get(uid);
+        if (timestamp > user.lastTime) user.lastTime = timestamp;
+        if (timestamp >= todayStart) user.countToday++;
+      });
+
+      const stats = Array.from(userMap.values()).sort((a, b) => b.countToday - a.countToday).slice(0, 100);
+
+      const tbody = document.querySelector("#userTable tbody");
+      tbody.innerHTML = "";
+      stats.forEach(u => {
+        const tr = document.createElement("tr");
+        if (u.countToday > 3) tr.classList.add("highlight");
+        tr.innerHTML = `
+          <td>${u.email}</td>
+          <td>${u.uid}</td>
+          <td>${u.countToday}</td>
+          <td>${u.lastTime?.toLocaleString?.() || ""}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById("userStats").innerHTML = `
+        <p>📦 目前共 ${allRecords.length} 筆占卜紀錄，今日使用者人數：${stats.filter(s => s.countToday > 0).length} 人</p>
+      `;
     }
   </script>
 </body>

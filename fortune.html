@@ -176,10 +176,11 @@
 	  
     }
 	
-    function calculateHexagram() {
+    async function calculateHexagram() {
       const user = firebase.auth().currentUser;
       if (!user || !db) return;
-	  if (!checkUsageLimit()) return;
+	  const ok = await checkUsageLimitByUID();
+	  if (!ok) return;
 
       const q = document.getElementById("question").value.trim();
 	  let n1Raw = document.getElementById("num1").value;
@@ -259,8 +260,8 @@
       document.getElementById("result").innerHTML = result.replace(/\n/g, "<br>");
 	  lastPrompt = result;
 	  openInChatGPT();
-	  incrementUsage();
-
+	  await incrementUsageCount(); 
+	  
       db.collection("divinationRecords").add({
         uid: user.uid,
         email: user.email,
