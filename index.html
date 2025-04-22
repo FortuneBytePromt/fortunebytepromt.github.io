@@ -2,10 +2,130 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="UTF-8">
-  <title>轉跳中...</title>
-  <meta http-equiv="refresh" content="0; url=fortune.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fortune Byte - 易經占卜與智慧分享</title>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 40px 0;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #2c3e50;
+    }
+    .header p {
+      color: #7f8c8d;
+      margin: 10px 0 0;
+    }
+    .main-content {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 30px;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+    }
+    .card h2 {
+      color: #2c3e50;
+      margin-top: 0;
+    }
+    .card p {
+      color: #7f8c8d;
+      margin-bottom: 25px;
+    }
+    .button {
+      display: inline-block;
+      padding: 12px 24px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      transition: background 0.3s ease;
+    }
+    .button:hover {
+      background: #2980b9;
+    }
+    .icon {
+      font-size: 3em;
+      margin-bottom: 20px;
+      color: #3498db;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #7f8c8d;
+      margin-top: 40px;
+    }
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      .header h1 {
+        font-size: 2em;
+      }
+    }
+  </style>
 </head>
 <body>
-  <p>正在為您導向 <a href="fortune.html">fortune.html</a>，如果沒有自動跳轉請點擊。</p>
+  <div class="container">
+    <div class="header">
+      <h1>🔮 Fortune Byte</h1>
+      <p>探索易經智慧，開啟人生新視野</p>
+    </div>
+
+    <div class="main-content">
+      <div class="card">
+        <div class="icon">🧙‍♂️</div>
+        <h2>易經數字卦占卜</h2>
+        <p>透過易經數字卦，為您解答人生疑惑，指引前進方向。</p>
+        <a href="fortune.html" class="button">開始占卜</a>
+      </div>
+
+      <div class="card">
+        <div class="icon">📚</div>
+        <h2>易經智慧文章</h2>
+        <p>深入淺出的易經解析，帶您領略傳統智慧的精髓。</p>
+        <a href="articles.html" class="button">閱讀文章</a>
+      </div>
+
+      <div class="card">
+        <div class="icon">📖</div>
+        <h2>推薦書籍</h2>
+        <p>精選易經相關書籍，助您更深入理解易經智慧。</p>
+        <a href="books.html" class="button">查看推薦</a>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>© 2024 Fortune Byte. All rights reserved.</p>
+    </div>
+  </div>
 </body>
 </html>

@@ -15,35 +15,270 @@
   <script src="lunarFun.js"></script>
   <script src="main.js"></script>
   <style>
-    body { font-family: sans-serif; background: #f4f4ed; margin: 20px; line-height: 1.6; }
-    .section { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+    body { 
+      font-family: "Noto Sans TC", sans-serif; 
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      margin: 0;
+      padding: 20px;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    .section { 
+      background: white; 
+      padding: 25px; 
+      margin-bottom: 25px; 
+      border-radius: 15px; 
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .section:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+    }
     .warning {
       background-color: #fff3cd;
       color: #856404;
       border: 1px solid #ffeeba;
-      padding: 12px 16px;
-      margin-bottom: 20px;
-      border-radius: 6px;
+      padding: 15px 20px;
+      margin-bottom: 25px;
+      border-radius: 10px;
       font-size: 0.95em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .warning a {
       color: #856404;
       text-decoration: underline;
     }
-    button, a.button-link { padding: 10px 14px; margin-top: 10px; background-color: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; text-decoration: none; display: inline-block; }
-    button:hover, a.button-link:hover { background-color: #45a049; }
-    textarea, input[type="number"] { width: 100%; max-width: 400px; font-size: 1em; padding: 8px; margin-top: 8px; border-radius: 4px; border: 1px solid #ccc; }
-    .output { background: #fffaf0; border: 1px solid #ccc; padding: 15px; font-family: 'Courier New', monospace; border-radius: 6px; color: #333; white-space: pre-wrap; }
-    .top-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; }
-    .lunar-box { font-size: 1.1em; font-weight: bold; font-family: 'Noto Serif TC', serif; color: #774200; background-color: #fff8e1; padding: 6px 10px; border-radius: 6px; box-shadow: 0 0 5px rgba(0,0,0,0.05); white-space: nowrap; }
-    @media (max-width: 600px) { .top-bar { flex-direction: column; align-items: stretch; } .top-bar > * { width: 100%; text-align: center; } }
+    .top-bar { 
+      display: flex; 
+      flex-wrap: wrap; 
+      justify-content: space-between; 
+      align-items: center; 
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .top-bar h1 { 
+      margin: 0; 
+      font-size: 1.8em;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    button, a.button-link { 
+      padding: 12px 20px; 
+      background-color: #3498db; 
+      color: white; 
+      border: none; 
+      border-radius: 25px; 
+      cursor: pointer; 
+      text-decoration: none; 
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1em;
+      transition: all 0.3s ease;
+    }
+    button:hover, a.button-link:hover { 
+      background-color: #2980b9;
+      transform: translateY(-2px);
+    }
+    button:disabled {
+      background-color: #bdc3c7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .input-group {
+      margin-bottom: 15px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+    textarea, input[type="number"] { 
+      width: 100%; 
+      max-width: 400px; 
+      font-size: 1em; 
+      padding: 12px; 
+      border: 2px solid #e0e0e0; 
+      border-radius: 10px;
+      transition: border-color 0.3s ease;
+    }
+    textarea:focus, input[type="number"]:focus {
+      border-color: #3498db;
+      outline: none;
+    }
+    .output { 
+      background: #fffaf0; 
+      border: 2px solid #e0e0e0; 
+      padding: 20px; 
+      font-family: 'Noto Serif TC', serif; 
+      border-radius: 10px; 
+      color: #2c3e50; 
+      white-space: pre-wrap;
+      line-height: 1.8;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 20px;
+    }
+    .loading::after {
+      content: "🔮";
+      animation: loading 1s infinite;
+    }
+    @keyframes loading {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 15px;
+    }
+    .checkbox-group input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+    @media (max-width: 768px) { 
+      body {
+        padding: 10px;
+      }
+      .container {
+        padding: 0;
+      }
+      .top-bar { 
+        flex-direction: column; 
+        align-items: stretch; 
+        gap: 10px;
+      } 
+      .top-bar > * { 
+        width: 100%; 
+        text-align: center; 
+      }
+      .button-group {
+        justify-content: center;
+        gap: 8px;
+      }
+      .section {
+        padding: 15px;
+        margin-bottom: 15px;
+      }
+      .input-group {
+        margin-bottom: 10px;
+      }
+      textarea, input[type="number"] {
+        font-size: 16px;
+        padding: 10px;
+      }
+      .output {
+        padding: 15px;
+        font-size: 0.95em;
+      }
+      .warning {
+        padding: 12px;
+        font-size: 0.9em;
+      }
+    }
   </style>
+</head>
+<body>
+  <div class="container">
+    <div class="warning">
+      <span>🔔</span>
+      <div>
+        <strong>警語：</strong>本系統由 ChatGPT 協助解卦，僅供參考。如需更進一步協助，請電郵至 
+        <a href="mailto:fortunebytepromt@gmail.com">fortunebytepromt@gmail.com</a> 
+        或填寫表單：<a href="https://forms.gle/LfKNxZ1Qpym4exgq6" target="_blank">https://forms.gle/LfKNxZ1Qpym4exgq6</a>
+      </div>
+    </div>
+
+    <div class="top-bar">
+      <h1 style="margin:0;font-size:1.8em;">🔮 Fortune Byte 數字卦占卜</h1>
+      <div class="button-group">
+        <a class="button-link" href="index.html">🏠 返回首頁</a>
+        <a class="button-link" href="history.html">📜 我的占卜紀錄</a>
+        <button class="button-link" onclick="logout()">🚪 登出</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>📘 卜卦須知</h2>
+      <p>使用易經數字卦前, 請注意以下事項, 以確保卦象準確並獲得有效指引:</p>
+      <ul>
+        <li><strong>誠心誠意</strong>: 問卦前請平心靜氣, 真誠面對問題, 避免隨意或嬉戲心態。</li>
+        <li><strong>問題清晰</strong>: 一次只問一個具體問題, 例如「我做某事結果如何」, 並避免模糊或多重問題。</li>
+        <li><strong>輸入數字</strong>: 請輸入三個三位數(100-999), 分別代表下卦、上卦與變爻。數字可隨機產生或自行選擇。</li>
+        <li><strong>解讀指引</strong>: 卦象提供方向而非絕對預測, 結果仍需結合您的行動與判斷。</li>
+        <li><strong>避免頻問</strong>: 同一問題不宜重複占卦, 建議間隔數日或待情況有變再問。</li>
+        <li><strong>每日限制</strong>: 每天最多只能使用三次，請珍惜占卦機會。</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <div class="input-group">
+        <label for="questionType">請選擇問題類型：</label>
+        <select id="questionType" required>
+          <option value="">請選擇...</option>
+          <option value="工作">工作</option>
+          <option value="感情">感情</option>
+          <option value="健康">健康</option>
+          <option value="財運">財運</option>
+          <option value="學業">學業</option>
+          <option value="家庭">家庭</option>
+          <option value="其他">其他</option>
+        </select>
+      </div>
+      <div class="input-group">
+        <label for="question">請輸入你的卜卦問題：</label>
+        <textarea id="question" rows="4" placeholder="例如：我最近的工作發展如何？"></textarea>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="input-group">
+        <label>第一個三位數(下卦): <input type="number" id="num1" min="100" max="999" placeholder="100-999"></label>
+      </div>
+      <div class="input-group">
+        <label>第二個三位數(上卦): <input type="number" id="num2" min="100" max="999" placeholder="100-999"></label>
+      </div>
+      <div class="input-group">
+        <label>第三個三位數(變爻): <input type="number" id="num3" min="100" max="999" placeholder="100-999"></label>
+      </div>
+      <div class="button-group">
+        <button onclick="generateRandom()">🎲 隨機生成</button>
+        <button id="calcBtn" onclick="calculateHexagram()">🔮 啟動占卜</button>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="noAutoSend">
+        <label for="noAutoSend">自行解讀</label>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>🧾 占卜結果</h2>
+      <div id="loading" class="loading"></div>
+      <div id="result" class="output"></div>
+    </div>
+  </div>
+
   <script>
     let db, isProcessing = false, lastCheckDate = null, dailyLimitOk = true;
     firebase.auth().onAuthStateChanged(user => {
       if (!user) { alert('請先登入！'); window.location.href = 'login.html'; }
       else { db = firebase.firestore(); }
     });
+
     async function ensureUsageLimit() {
       const today = new Date().toISOString().slice(0,10);
       if (lastCheckDate === today) return dailyLimitOk;
@@ -52,169 +287,163 @@
       dailyLimitOk = ok;
       return ok;
     }
-  </script>
-</head>
-<body>
-  <!-- 警語區塊 -->
-  <div class="warning">
-    🔔 <strong>警語：</strong>本系統由 ChatGPT 協助解卦，僅供參考。如需更進一步協助，請電郵至 
-    <a href="mailto:fortunebytepromt@gmail.com">fortunebytepromt@gmail.com</a> 
-    或填寫表單：<a href="https://forms.gle/LfKNxZ1Qpym4exgq6" target="_blank">https://forms.gle/LfKNxZ1Qpym4exgq6</a>
-  </div>
 
-  <div class="top-bar">
-    <h1 style="margin:0;font-size:1.5em;">🔮 Fortune Byte 數字卦占卜</h1>
-    <div id="lunarTime" class="lunar-box"></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
-      <a class="button-link" href="history.html">📜 我的占卜紀錄</a>
-      <button class="button-link" onclick="logout()">🚪 登出</button>
-    </div>
-  </div>
-
-  <div class="section">
-    <h2>📘 卜卦須知</h2>
-    <p>使用易經數字卦前, 請注意以下事項, 以確保卦象準確並獲得有效指引:</p>
-    <ul>
-      <li><strong>誠心誠意</strong>: 問卦前請平心靜氣, 真誠面對問題, 避免隨意或嬉戲心態。</li>
-      <li><strong>問題清晰</strong>: 一次只問一個具體問題, 例如「我做某事結果如何」, 並避免模糊或多重問題。</li>
-      <li><strong>輸入數字</strong>: 請輸入三個三位數(100-999), 分別代表下卦、上卦與變爻。數字可隨機產生或自行選擇。</li>
-      <li><strong>解讀指引</strong>: 卦象提供方向而非絕對預測, 結果仍需結合您的行動與判斷。</li>
-      <li><strong>避免頻問</strong>: 同一問題不宜重複占卦, 建議間隔數日或待情況有變再問。</li>
-      <li><strong>每日限制</strong>: 每天最多只能使用三次，請珍惜占卦機會。</li>
-    </ul>
-  </div>
-
-  <div class="section">
-    <label>請輸入你的卜卦問題：</label><br>
-    <textarea id="question" rows="4"></textarea>
-  </div>
-
-  <div class="section">
-    <label>第一個三位數(下卦): <input type="number" id="num1"></label><br>
-    <label>第二個三位數(上卦): <input type="number" id="num2"></label><br>
-    <label>第三個三位數(變爻): <input type="number" id="num3"></label><br>
-    <button onclick="generateRandom()">隨機</button>
-    <button id="calcBtn" onclick="calculateHexagram()">👉 啟動占卜 · 請示易神 </button>
-    <label><input type="checkbox" id="noAutoSend"> 自行解讀 </label>
-  </div>
-
-  <div class="section">
-    <h2>🧾 占卜結果</h2>
-    <div id="result" class="output"></div>
-  </div>
-
-  <script>
     let lastPrompt = '';
     function openInChatGPT() {
       if (!lastPrompt) { alert('請先計算卦象'); return; }
       const url = `https://chat.openai.com/?prompt=${encodeURIComponent(lastPrompt)}`;
       if (!document.getElementById('noAutoSend').checked) window.open(url,'_blank');
     }
+
     function generateRandom() {
       const [n1,n2,n3] = getTimeBasedNumbers();
       document.getElementById('num1').value = n1;
       document.getElementById('num2').value = n2;
       document.getElementById('num3').value = n3;
     }
+
     async function calculateHexagram() {
       if (isProcessing) return;
       isProcessing = true;
-      document.getElementById('calcBtn').disabled = true;
+      const calcBtn = document.getElementById('calcBtn');
+      const loading = document.getElementById('loading');
+      calcBtn.disabled = true;
+      loading.style.display = 'block';
+
       const user = firebase.auth().currentUser;
       if (!user || !db) { reset(); return; }
       if (!await ensureUsageLimit()) { reset(); return; }
+
+      const questionType = document.getElementById('questionType').value;
       const q = document.getElementById('question').value.trim();
       let a = document.getElementById('num1').value,
           b = document.getElementById('num2').value,
           c = document.getElementById('num3').value;
-      if ((a||b||c) && !(a&&b&&c)) { alert('請填完整三數'); reset(); return; }
-      const n1 = a?parseInt(a):null,
-            n2 = b?parseInt(b):null,
-            n3 = c?parseInt(c):null;
-      const lower = n1 % 8,
-            upper = n2 % 8,
-            changeIndex = (n3 % 6 || 6) - 1;
-      const trigramBinary = ['111','000','001','010','011','100','101','110'];
-      const trigramNames = ['地','天','澤','火','雷','風','水','山'];
-      const lowerBinary = trigramBinary[lower], upperBinary = trigramBinary[upper];
-      const lines = [...lowerBinary, ...upperBinary].map(x=>parseInt(x));
-      const originalLines = [...lines];
-      // 本卦與爻辭
-      const lowerName = trigramNames[lower];
-      const upperName = trigramNames[upper];
-      const baseKey = `${upperName}${lowerName}`;
-      const baseGuaNum = hexagramsMapping[baseKey]?.number;
-      const baseJsonKey = Object.keys(guaData).find(k=>k.startsWith(String(baseGuaNum).padStart(2,'0')));  
-      const baseGua = guaData[baseJsonKey];
-      const baseYaoName = Object.keys(baseGua['爻辭'])[changeIndex];
-      const yaoText = baseGua['爻辭'][baseYaoName];
-      // 變卦
-      lines[changeIndex] = lines[changeIndex]?0:1;
-      const changedLowerIdx = trigramBinary.indexOf(lines.slice(0,3).join(''));
-      const changedUpperIdx = trigramBinary.indexOf(lines.slice(3).join(''));
-      const changedKey = `${trigramNames[changedUpperIdx]}${trigramNames[changedLowerIdx]}`;
-      const changedNum = hexagramsMapping[changedKey]?.number;
-      const changedJson = Object.keys(guaData).find(k=>k.startsWith(String(changedNum).padStart(2,'0')));
-      // --- 新增 互卦 ---
-      const huBinL = [originalLines[1],originalLines[2],originalLines[3]].join('');
-      const huBinU = [originalLines[2],originalLines[3],originalLines[4]].join('');
-      const huLIdx = trigramBinary.indexOf(huBinL);
-      const huUIdx = trigramBinary.indexOf(huBinU);
-      const huKey = `${trigramNames[huUIdx]}${trigramNames[huLIdx]}`;
-      const huNum = hexagramsMapping[huKey]?.number;
-      const huJson = Object.keys(guaData).find(k=>k.startsWith(String(huNum).padStart(2,'0')));
-      // --- 新增 覆卦 ---
-      const rev = [...originalLines].reverse();
-      const fuBinL = rev.slice(0,3).join('');
-      const fuBinU = rev.slice(3).join('');
-      const fuLIdx = trigramBinary.indexOf(fuBinL);
-      const fuUIdx = trigramBinary.indexOf(fuBinU);
-      const fuKey = `${trigramNames[fuUIdx]}${trigramNames[fuLIdx]}`;
-      const fuNum = hexagramsMapping[fuKey]?.number;
-      const fuJson = Object.keys(guaData).find(k=>k.startsWith(String(fuNum).padStart(2,'0')));
-      // 組合結果
-      const result = `你現在是熟悉易經梅花易數的專家，請根據我的問題進行解析
-			嚴格遵循不誠不占、不義不占、不疑不占
-			如果有上述三不占情況，請不要幫我占卜
 
-			我想問 ${q||'...'} 這件事，
-			📘 占得
-			卦辭：${baseGua?.卦辭}
-			爻辭：${baseJsonKey} ${baseYaoName} ${yaoText}
-			之卦：${changedJson} 互卦：${huJson} 覆卦：${fuJson}
+      if (!questionType) {
+        alert('請選擇問題類型');
+        reset();
+        return;
+      }
 
-			👉請以下列的格式回答，每個格式請精簡扼要的回答
-			🔮 問題解析
-			📘 本卦解析 (意義: 當前整體局勢與結構)
-			🔁 爻辭解析 (意義: 關鍵變化點，以此為主)
-			🧙‍♂️ 總結與建議
-			`;
-      
-      document.getElementById('result').innerHTML = result.replace(/\n/g,'<br>');
-      lastPrompt = result;
-      openInChatGPT();
+      if ((a||b||c) && !(a&&b&&c)) { 
+        alert('請填完整三數'); 
+        reset(); 
+        return; 
+      }
+
       try {
-        await incrementUsageCount();
-        await db.collection('divinationRecords').add({
+        const n1 = a ? parseInt(a) : null,
+              n2 = b ? parseInt(b) : null,
+              n3 = c ? parseInt(c) : null;
+
+        const lower = n1 % 8,
+              upper = n2 % 8,
+              changeIndex = (n3 % 6 || 6) - 1;
+
+        const trigramBinary = ['111','000','001','010','011','100','101','110'];
+        const trigramNames = ['地','天','澤','火','雷','風','水','山'];
+        const lowerBinary = trigramBinary[lower], 
+              upperBinary = trigramBinary[upper];
+        const lines = [...lowerBinary, ...upperBinary].map(x=>parseInt(x));
+        const originalLines = [...lines];
+
+        // 本卦與爻辭
+        const lowerName = trigramNames[lower];
+        const upperName = trigramNames[upper];
+        const baseKey = `${upperName}${lowerName}`;
+        const baseGuaNum = hexagramsMapping[baseKey]?.number;
+        const baseJsonKey = Object.keys(guaData).find(k=>k.startsWith(String(baseGuaNum).padStart(2,'0')));  
+        const baseGua = guaData[baseJsonKey];
+        const baseYaoName = Object.keys(baseGua['爻辭'])[changeIndex];
+        const yaoText = baseGua['爻辭'][baseYaoName];
+
+        // 變卦
+        lines[changeIndex] = lines[changeIndex] ? 0 : 1;
+        const changedLowerIdx = trigramBinary.indexOf(lines.slice(0,3).join(''));
+        const changedUpperIdx = trigramBinary.indexOf(lines.slice(3).join(''));
+        const changedKey = `${trigramNames[changedUpperIdx]}${trigramNames[changedLowerIdx]}`;
+        const changedNum = hexagramsMapping[changedKey]?.number;
+        const changedJson = Object.keys(guaData).find(k=>k.startsWith(String(changedNum).padStart(2,'0')));
+
+        // 互卦
+        const huBinL = [originalLines[1],originalLines[2],originalLines[3]].join('');
+        const huBinU = [originalLines[2],originalLines[3],originalLines[4]].join('');
+        const huLIdx = trigramBinary.indexOf(huBinL);
+        const huUIdx = trigramBinary.indexOf(huBinU);
+        const huKey = `${trigramNames[huUIdx]}${trigramNames[huLIdx]}`;
+        const huNum = hexagramsMapping[huKey]?.number;
+        const huJson = Object.keys(guaData).find(k=>k.startsWith(String(huNum).padStart(2,'0')));
+
+        // 覆卦
+        const rev = [...originalLines].reverse();
+        const fuBinL = rev.slice(0,3).join('');
+        const fuBinU = rev.slice(3).join('');
+        const fuLIdx = trigramBinary.indexOf(fuBinL);
+        const fuUIdx = trigramBinary.indexOf(fuBinU);
+        const fuKey = `${trigramNames[fuUIdx]}${trigramNames[fuLIdx]}`;
+        const fuNum = hexagramsMapping[fuKey]?.number;
+        const fuJson = Object.keys(guaData).find(k=>k.startsWith(String(fuNum).padStart(2,'0')));
+
+        // 組合結果
+        const result = `你現在是熟悉易經梅花易數的專家，請根據我的問題進行解析
+嚴格遵循不誠不占、不義不占、不疑不占
+如果有上述三不占情況，請不要幫我占卜
+
+我想問 ${q||'...'} 這件事，
+📘 占得
+卦辭：${baseGua?.卦辭}
+爻辭：${baseJsonKey} ${baseYaoName} ${yaoText}
+之卦：${changedJson} 互卦：${huJson} 覆卦：${fuJson}
+
+👉請以下列的格式回答，每個格式請精簡扼要的回答
+🔮 問題解析
+📘 本卦解析 (意義: 當前整體局勢與結構)
+🔁 爻辭解析 (意義: 關鍵變化點，以此為主)
+🧙‍♂️ 總結與建議
+`;
+        
+        document.getElementById('result').innerHTML = result.replace(/\n/g,'<br>');
+        lastPrompt = result;
+        openInChatGPT();
+
+        // 保存記錄
+        const batch = db.batch();
+        
+        // 更新使用次數
+        const today = new Date().toISOString().slice(0,10).replace(/-/g, '');
+        const docId = `${user.uid}_${today}`;
+        const usageRef = db.collection('userUsage').doc(docId);
+        batch.set(usageRef, { count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        
+        // 添加占卜記錄
+        const recordRef = db.collection('divinationRecords').doc();
+        batch.set(recordRef, {
           uid: user.uid,
           email: user.email,
+          questionType: questionType,
           question: q,
           baseGua: baseJsonKey,
           changedGua: changedJson,
           yao: baseYaoName,
           timestamp: firebase.firestore.FieldValue.serverTimestamp()
         });
-      } catch (e) {}
-      reset();
+        
+        await batch.commit();
+      } catch (error) {
+        console.error("占卜過程發生錯誤:", error);
+        alert("占卜過程發生錯誤，請稍後再試");
+      } finally {
+        reset();
+      }
     }
-    function reset() { isProcessing = false; document.getElementById('calcBtn').disabled = false; }
+
+    function reset() { 
+      isProcessing = false; 
+      document.getElementById('calcBtn').disabled = false;
+      document.getElementById('loading').style.display = 'none';
+    }
   </script>
 
-  <footer style="text-align:center;margin-top:50px;font-family:serif;font-size:0.95em;color:#444;">
-    <p>天機自顯 · 本頁訪客人數：</p>
-    <div id="sfcm8akhqesh2eeqj8xa4dhjusj43wh7jxf"></div>
-    <script src="https://counter4.optistats.ovh/private/counter.js?c=m8akhqesh2eeqj8xa4dhjusj43wh7jxf&down=async" async></script>
-    <noscript><a href="https://www.freecounterstat.com" title="web counter"><img src="https://counter4.optistats.ovh/private/freecounterstat.php?c=m8akhqesh2eeqj8xa4dhjusj43wh7jxf" border="0" title="web counter" alt="web counter"></a></noscript>
-  </footer>
 </body>
 </html>

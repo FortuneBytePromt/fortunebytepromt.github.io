@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 文章標題 | Fortune Byte</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    .article-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+    h2 {
+      color: #3498db;
+      margin-top: 30px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h3 {
+      color: #2c3e50;
+      margin-top: 20px;
+    }
+    ul, ol {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .tip {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .nav-bar a {
+      text-decoration: none;
+      color: #3498db;
+      padding: 8px 15px;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .nav-bar a:hover {
+      background: #3498db;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .article-container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="index.html">📚 返回文章目錄</a>
+    <a href="../fortune.html">🔮 開始占卜</a>
+  </div>
+
+  <div class="article-container" id="articleContent">
+    <div class="loading">載入中...</div>
+  </div>
+
+  <script>
+    // 配置 marked
+    marked.setOptions({
+      breaks: true,
+      gfm: true
+    });
+
+    // 載入文章
+    async function loadArticle() {
+      try {
+        const response = await fetch('content/template.md');
+        if (!response.ok) {
+          throw new Error('文章載入失敗');
+        }
+        const text = await response.text();
+        const html = marked.parse(text);
+        document.getElementById('articleContent').innerHTML = html;
+      } catch (error) {
+        console.error('Error loading article:', error);
+        document.getElementById('articleContent').innerHTML = `
+          <div class="error">
+            <h2>載入失敗</h2>
+            <p>抱歉，文章載入失敗，請稍後再試。</p>
+          </div>
+        `;
+      }
+    }
+
+    // 頁面載入時執行
+    window.onload = loadArticle;
+  </script>
+</body>
+</html> 

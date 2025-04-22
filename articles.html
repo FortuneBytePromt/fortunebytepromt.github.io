@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📚 使用說明 | Fortune Byte</title>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      line-height: 1.6;
+      color: #2c3e50;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f7fa;
+    }
+    .article-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #2c3e50;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2em;
+    }
+    h2 {
+      color: #3498db;
+      margin-top: 30px;
+      border-bottom: 2px solid #3498db;
+      padding-bottom: 10px;
+    }
+    h3 {
+      color: #2c3e50;
+      margin-top: 20px;
+    }
+    ul, ol {
+      padding-left: 20px;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+    .note {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background: #f8d7da;
+      border-left: 4px solid #dc3545;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .tip {
+      background: #d4edda;
+      border-left: 4px solid #28a745;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 4px;
+    }
+    .nav-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+    .nav-bar a {
+      text-decoration: none;
+      color: #3498db;
+      padding: 8px 15px;
+      border-radius: 5px;
+      background: white;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .nav-bar a:hover {
+      background: #3498db;
+      color: white;
+    }
+    @media (max-width: 768px) {
+      body {
+        padding: 10px;
+      }
+      .article-container {
+        padding: 20px;
+      }
+      h1 {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="nav-bar">
+    <a href="index.html">🏠 返回首頁</a>
+    <a href="fortune.html">🔮 開始占卜</a>
+  </div>
+
+  <div class="article-container" id="articleContent">
+    <div class="loading">載入中...</div>
+  </div>
+
+  <script>
+    // 配置 marked
+    marked.setOptions({
+      breaks: true,
+      gfm: true
+    });
+
+    // 文章內容
+    const articleContent = `# 易經數字卦占卜使用指南
+
+## 簡介
+易經數字卦是一種結合易經智慧與現代科技的占卜方式，通過輸入三個數字來獲得卦象，並結合 ChatGPT 的解析，為您提供生活指引。
+
+## 使用步驟
+
+### 1. 選擇問題類型
+首先，請從以下類型中選擇您的問題類別：
+- 工作：職場發展、工作選擇、升遷機會等
+- 感情：感情發展、婚姻問題、人際關係等
+- 健康：身體狀況、疾病預後、養生建議等
+- 財運：投資理財、事業發展、財運走向等
+- 學業：考試升學、學習方向、研究發展等
+- 家庭：家庭關係、親子問題、家務處理等
+- 其他：不屬於上述類別的問題
+
+### 2. 輸入問題
+請用簡潔明確的語言描述您的問題，例如：
+- 「我最近的工作發展如何？」
+- 「這段感情是否值得繼續？」
+- 「這個投資機會是否適合？」
+
+### 3. 輸入數字
+您需要輸入三個三位數（100-999）：
+- 第一個數字：代表下卦
+- 第二個數字：代表上卦
+- 第三個數字：代表變爻
+
+您可以使用以下方式獲取數字：
+- 點擊「隨機生成」按鈕
+- 自行選擇有意義的數字
+- 根據當下時間自動生成
+
+### 4. 啟動占卜
+點擊「啟動占卜」按鈕後，系統會：
+1. 計算卦象
+2. 生成解析
+3. 提供建議
+
+## 解析內容
+系統會提供以下解析：
+1. 本卦解析：說明當前整體局勢
+2. 爻辭白話解釋：解釋卦象的具體含義
+3. 結合爻辭回答問題：針對您的具體問題提供解答
+4. 總結與建議：提供行動建議
+
+## 使用須知
+1. 誠心誠意：問卦前請平心靜氣，真誠面對問題
+2. 問題清晰：一次只問一個具體問題
+3. 避免頻問：同一問題不宜重複占卦
+4. 每日限制：每天最多使用三次
+5. 僅供參考：結果仍需結合您的判斷
+
+## 注意事項
+- 本系統由 ChatGPT 協助解卦，僅供參考
+- 如需更詳細的解析，可以點擊「重看解析」按鈕
+- 您可以在「我的占卜紀錄」中查看歷史記錄
+- 歡迎提供反饋，幫助我們改進系統
+
+## 使用建議
+1. 選擇安靜的環境
+2. 保持專注的心態
+3. 仔細閱讀解析內容
+4. 結合實際情況思考
+5. 適時記錄重要建議
+
+希望這個工具能為您的生活提供有益的指引。如有任何問題，歡迎聯繫我們。`;
+
+    // 解析並顯示文章
+    function displayArticle() {
+      try {
+        const html = marked.parse(articleContent);
+        document.getElementById('articleContent').innerHTML = html;
+      } catch (error) {
+        console.error('Error parsing article:', error);
+        document.getElementById('articleContent').innerHTML = `
+          <div class="error">
+            <h2>解析失敗</h2>
+            <p>抱歉，文章解析失敗，請稍後再試。</p>
+          </div>
+        `;
+      }
+    }
+
+    // 頁面載入時執行
+    window.onload = displayArticle;
+  </script>
+</body>
+</html> 

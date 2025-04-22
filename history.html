@@ -16,7 +16,42 @@
     .header-bar h1 { margin: 0; font-size: 1.5em; flex-grow: 1; }
     .back-link { text-decoration: none; background-color: #607d8b; color: white; padding: 8px 12px; border-radius: 6px; font-size: 0.95em; white-space: nowrap; }
     #searchBox { padding: 8px 12px; font-size: 1em; border-radius: 6px; border: 1px solid #aaa; flex-grow: 2; max-width: 300px; }
-    @media (max-width: 600px) { .header-bar { flex-direction: column; align-items: stretch; } #searchBox { width: 100%; max-width: none; } .back-link { width: 100%; text-align: center; } }
+    @media (max-width: 600px) { 
+      body {
+        margin: 10px;
+      }
+      .header-bar { 
+        flex-direction: column; 
+        align-items: stretch; 
+        gap: 10px;
+      } 
+      .header-bar h1 {
+        font-size: 1.3em;
+      }
+      #searchBox { 
+        width: 100%; 
+        max-width: none; 
+        font-size: 16px;
+        padding: 10px;
+      } 
+      .back-link { 
+        width: 100%; 
+        text-align: center;
+        padding: 10px;
+      }
+      .record {
+        padding: 12px;
+        margin: 8px auto;
+      }
+      .record p {
+        font-size: 0.95em;
+      }
+      .delete-button, .feedback-button, .retry-button {
+        width: 100%;
+        margin: 5px 0;
+        padding: 8px;
+      }
+    }
     .record { background: white; margin: 10px auto; padding: 15px; border-radius: 10px; max-width: 700px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); transition: transform 0.2s ease, box-shadow 0.3s ease; }
     .record:hover { transform: scale(1.01); box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
     .record p { margin: 5px 0; }
@@ -37,15 +72,16 @@
   <div class="header-bar">
     <h1>📜 占卜紀錄</h1>
     <input id="searchBox" type="text" placeholder="🔍 搜尋問題...">
-    <a href="fortune.html" class="back-link">🔙 回主頁</a>
+    <a href="index.html" class="back-link">🏠 返回首頁</a>
   </div>
   <div id="records"></div>
   <div id="loading" style="text-align:center; color:#888; margin:20px;">載入中...</div>
   <script>
     let lastVisible = null;
     let loading = false;
-    const pageSize = 10;
+    const pageSize = 20;
     let userRef = null;
+    let lastQuery = null;
 
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
@@ -53,7 +89,10 @@
         window.location.href = 'index.html';
       } else {
         const db = firebase.firestore();
-        userRef = db.collection("divinationRecords").where("uid","==",user.uid).orderBy("timestamp","desc");
+        userRef = db.collection("divinationRecords")
+          .where("uid", "==", user.uid)
+          .orderBy("timestamp", "desc")
+          .limit(pageSize);
         loadMore();
         window.addEventListener('scroll', handleScroll);
         document.getElementById("searchBox").addEventListener("input", handleSearch);
@@ -65,8 +104,16 @@
       loading = true;
       document.getElementById("loading").style.display = "block";
 
-      let query = userRef.limit(pageSize);
-      if (lastVisible) query = query.startAfter(lastVisible);
+      let query = userRef;
+      if (lastVisible) {
+        query = query.startAfter(lastVisible);
+      }
+
+      if (lastQuery && lastQuery.isEqual(query)) {
+        loading = false;
+        return;
+      }
+      lastQuery = query;
 
       query.get().then(snapshot => {
         const container = document.getElementById("records");
@@ -76,11 +123,13 @@
           return;
         }
 
-        snapshot.forEach(doc => {
+        const docs = snapshot.docs;
+        const fragment = document.createDocumentFragment();
+
+        docs.forEach(doc => {
           const data = doc.data();
           data._id = doc.id;
 
-          // 處理卦辭與爻辭
           const raw = data.baseGua || '';
           const key = raw.replace(/\s+/g, '');
           const info = (typeof guaData !== 'undefined' ? guaData[key] : {}) || {};
@@ -104,13 +153,15 @@
             <button class="retry-button" onclick="reopenChatGPT('${data.question}','${data.baseGua}','${data.yao}','${data.changedGua}','${egc}','${eyc}')">📖重看解析</button>
             <button class="delete-button" onclick="deleteRecord('${data._id}',this)">🗑️刪除</button>
           `;
-          container.appendChild(div);
+          fragment.appendChild(div);
         });
 
-        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        container.appendChild(fragment);
+        lastVisible = docs[docs.length - 1];
         loading = false;
         document.getElementById("loading").style.display = "none";
       }).catch(err => {
+        console.error("讀取紀錄錯誤：", err);
         alert("讀取紀錄錯誤：" + err.message);
         loading = false;
       });

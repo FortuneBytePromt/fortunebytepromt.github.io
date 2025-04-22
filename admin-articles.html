@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>文章管理 | Fortune Byte</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <style>
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 40px 0;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 15px;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 2.5em;
+      color: #2c3e50;
+    }
+    .back-link {
+      display: inline-block;
+      padding: 10px 20px;
+      background: #3498db;
+      color: white;
+      text-decoration: none;
+      border-radius: 25px;
+      margin-top: 20px;
+      transition: background 0.3s ease;
+    }
+    .back-link:hover {
+      background: #2980b9;
+    }
+    .article-form {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      margin-bottom: 30px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      color: #2c3e50;
+      font-weight: bold;
+    }
+    .form-group input,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+    }
+    .form-group textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+    .submit-btn {
+      background: #3498db;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: background 0.3s ease;
+    }
+    .submit-btn:hover {
+      background: #2980b9;
+    }
+    .articles-list {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .article-item {
+      border-bottom: 1px solid #eee;
+      padding: 20px 0;
+    }
+    .article-item:last-child {
+      border-bottom: none;
+    }
+    .article-item h3 {
+      margin: 0 0 10px 0;
+      color: #2c3e50;
+    }
+    .article-item .date {
+      color: #7f8c8d;
+      font-size: 0.9em;
+      margin-bottom: 10px;
+    }
+    .article-item .actions {
+      margin-top: 10px;
+    }
+    .article-item .edit-btn,
+    .article-item .delete-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 15px;
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 0.9em;
+    }
+    .article-item .edit-btn {
+      background: #3498db;
+      color: white;
+    }
+    .article-item .delete-btn {
+      background: #e74c3c;
+      color: white;
+    }
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: #7f8c8d;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>📝 文章管理</h1>
+      <a href="index.html" class="back-link">🔙 返回首頁</a>
+    </div>
+
+    <div class="article-form">
+      <h2>新增文章</h2>
+      <form id="articleForm">
+        <div class="form-group">
+          <label for="title">標題</label>
+          <input type="text" id="title" required>
+        </div>
+        <div class="form-group">
+          <label for="content">內容</label>
+          <textarea id="content" required></textarea>
+        </div>
+        <button type="submit" class="submit-btn">發布文章</button>
+      </form>
+    </div>
+
+    <div class="articles-list">
+      <h2>文章列表</h2>
+      <div id="articlesList"></div>
+    </div>
+
+    <div class="footer">
+      <p>© 2024 Fortune Byte. All rights reserved.</p>
+    </div>
+  </div>
+
+  <script>
+    // 檢查管理員權限
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user || user.uid !== "fLhFeaiYwsVhDJ0O3ozFWbo2Qv22") {
+        alert("無權限訪問");
+        window.location.href = "index.html";
+        return;
+      }
+      loadArticles();
+    });
+
+    // 載入文章列表
+    function loadArticles() {
+      const db = firebase.firestore();
+      db.collection("articles")
+        .orderBy("timestamp", "desc")
+        .get()
+        .then(snapshot => {
+          const articlesList = document.getElementById("articlesList");
+          articlesList.innerHTML = "";
+          
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const article = document.createElement("div");
+            article.className = "article-item";
+            article.innerHTML = `
+              <h3>${data.title}</h3>
+              <p class="date">${data.timestamp.toDate().toLocaleString()}</p>
+              <p>${data.content.substring(0, 200)}...</p>
+              <div class="actions">
+                <button class="edit-btn" onclick="editArticle('${doc.id}')">編輯</button>
+                <button class="delete-btn" onclick="deleteArticle('${doc.id}')">刪除</button>
+              </div>
+            `;
+            articlesList.appendChild(article);
+          });
+        });
+    }
+
+    // 新增文章
+    document.getElementById("articleForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("title").value;
+      const content = document.getElementById("content").value;
+
+      try {
+        await firebase.firestore().collection("articles").add({
+          title,
+          content,
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+        alert("文章發布成功！");
+        document.getElementById("articleForm").reset();
+        loadArticles();
+      } catch (error) {
+        alert("發布失敗：" + error.message);
+      }
+    });
+
+    // 編輯文章
+    function editArticle(id) {
+      const db = firebase.firestore();
+      db.collection("articles").doc(id).get().then(doc => {
+        const data = doc.data();
+        document.getElementById("title").value = data.title;
+        document.getElementById("content").value = data.content;
+        // 可以添加編輯模式的其他邏輯
+      });
+    }
+
+    // 刪除文章
+    function deleteArticle(id) {
+      if (confirm("確定要刪除這篇文章嗎？")) {
+        firebase.firestore().collection("articles").doc(id).delete()
+          .then(() => {
+            alert("文章已刪除");
+            loadArticles();
+          })
+          .catch(error => {
+            alert("刪除失敗：" + error.message);
+          });
+      }
+    }
+  </script>
+</body>
+</html> 
