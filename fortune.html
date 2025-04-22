@@ -183,8 +183,12 @@
 			爻辭：${baseJsonKey} ${baseYaoName} ${yaoText}
 			之卦：${changedJson} 互卦：${huJson} 覆卦：${fuJson}
 
-			👉請以下列的格式回答，每個格式請精</br>      
-      ... // (後續格式說明同原檔)
+			👉請以下列的格式回答，每個格式請精簡扼要的回答
+			🔮 問題解析
+			📘 本卦解析 (意義: 當前整體局勢與結構)
+			🔁 爻辭解析 (意義: 關鍵變化點，以此為主)
+			🧙‍♂️ 總結與建議
+			`;
       `;
       document.getElementById('result').innerHTML = result.replace(/\n/g,'<br>');
       lastPrompt = result;
