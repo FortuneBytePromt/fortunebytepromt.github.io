@@ -190,6 +190,40 @@
         font-size: 0.9em;
       }
     }
+    @keyframes rainbow {
+      0% { color: #ff0000; }
+      17% { color: #ff8800; }
+      33% { color: #ffff00; }
+      50% { color: #00ff00; }
+      67% { color: #0000ff; }
+      83% { color: #8800ff; }
+      100% { color: #ff0000; }
+    }
+
+    @keyframes sparkle {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .easter-egg {
+      animation: rainbow 3s infinite, sparkle 1s infinite;
+      font-size: 1.2em;
+      font-weight: bold;
+      text-align: center;
+      margin: 20px 0;
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+    }
+
+    .easter-egg-icon {
+      font-size: 2em;
+      margin: 10px;
+      display: inline-block;
+      animation: sparkle 1s infinite;
+    }
   </style>
 </head>
 <body>
@@ -329,13 +363,32 @@
       if ((a||b||c) && !(a&&b&&c)) { 
         alert('請填完整三數'); 
         reset(); 
-        return; 
+        return;
       }
 
       try {
         const n1 = a ? parseInt(a) : null,
               n2 = b ? parseInt(b) : null,
               n3 = c ? parseInt(c) : null;
+
+        // 檢查是否為測試後門
+        if (n1 === 999 && n2 === 999 && n3 === 999) {
+          console.log("測試後門已啟動，不增加使用次數");
+          // 顯示彩蛋效果
+          const resultDiv = document.getElementById('result');
+          const easterEggDiv = document.createElement('div');
+          easterEggDiv.className = 'easter-egg';
+          easterEggDiv.innerHTML = `
+            <div class="easter-egg-icon">🎉</div>
+            <p>恭喜你發現了隱藏彩蛋！</p>
+            <p>你獲得了無限次數的占卜機會！</p>
+            <div class="easter-egg-icon">🔮</div>
+            <p>這個彩蛋是給開發者的測試後門</p>
+            <p>請不要告訴其他人哦～</p>
+            <div class="easter-egg-icon">✨</div>
+          `;
+          resultDiv.parentNode.insertBefore(easterEggDiv, resultDiv);
+        }
 
         const lower = n1 % 8,
               upper = n2 % 8,
@@ -396,10 +449,10 @@
 爻辭：${baseJsonKey} ${baseYaoName} ${yaoText}
 之卦：${changedJson} 互卦：${huJson} 覆卦：${fuJson}
 
-👉請以下列的格式回答，每個格式請精簡扼要的回答
-🔮 問題解析
-📘 本卦解析 (意義: 當前整體局勢與結構)
-🔁 爻辭解析 (意義: 關鍵變化點，以此為主)
+👉請以下列的格式回答，請精簡扼要，依據實際資料，不要加油添促
+📘 本卦解析 
+🔄 爻辭白話解釋 + 義理分析
+🔮 結合爻辭回答問題
 🧙‍♂️ 總結與建議
 `;
         
@@ -410,11 +463,14 @@
         // 保存記錄
         const batch = db.batch();
         
-        // 更新使用次數
-        const today = new Date().toISOString().slice(0,10).replace(/-/g, '');
-        const docId = `${user.uid}_${today}`;
-        const usageRef = db.collection('userUsage').doc(docId);
-        batch.set(usageRef, { count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        // 如果不是測試後門，才更新使用次數
+        if (!(n1 === 999 && n2 === 999 && n3 === 999)) {
+          // 更新使用次數
+          const today = new Date().toISOString().slice(0,10).replace(/-/g, '');
+          const docId = `${user.uid}_${today}`;
+          const usageRef = db.collection('userUsage').doc(docId);
+          batch.set(usageRef, { count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        }
         
         // 添加占卜記錄
         const recordRef = db.collection('divinationRecords').doc();

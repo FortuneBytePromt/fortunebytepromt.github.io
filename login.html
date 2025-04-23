@@ -6,7 +6,6 @@
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="firebase-config.js"></script>
-  <script src="main.js" defer></script>
   <style>
     body {
       font-family: "Noto Sans TC", sans-serif;
@@ -60,6 +59,42 @@
       font-size: 0.9em;
       color: #888;
     }
+    .nav-links {
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+    .nav-links a {
+      color: #4CAF50;
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+    .nav-links a:hover {
+      color: #45a049;
+    }
+    .error-message {
+      color: #dc3545;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .success-message {
+      color: #28a745;
+      margin-top: 5px;
+      font-size: 14px;
+    }
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+    .loading::after {
+      content: "⏳";
+      animation: loading 1s infinite;
+    }
+    @keyframes loading {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 </head>
 <body>
@@ -70,12 +105,138 @@
       <input type="email" id="email" placeholder="Email"><br>
       <input type="password" id="password" placeholder="Password"><br>
       <button onclick="emailLogin()">登入</button>
-      <button onclick="emailRegister()">註冊</button>
-	  <button class="link-button" onclick="resetPassword()">忘記密碼？</button>
+      <button onclick="window.location.href='register.html'">註冊</button>
+      <button class="link-button" onclick="resetPassword()">忘記密碼？</button>
+      <div id="errorMessage" class="error-message"></div>
+      <div id="successMessage" class="success-message"></div>
+      <div id="loading" class="loading">處理中...</div>
     </div>
     <hr style="margin: 20px 0;">
     <button onclick="googleLogin()">使用 Google 登入</button>
     <div class="footer">© Fortune Byte 易算</div>
+    <div class="nav-links">
+      <p>還沒有帳號？<a href="register.html">立即註冊</a></p>
+    </div>
   </div>
+
+  <script>
+    // 使用電子郵件登入
+    async function emailLogin() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const loading = document.getElementById("loading");
+
+      // 清除之前的訊息
+      errorMessage.textContent = "";
+      successMessage.textContent = "";
+
+      // 顯示載入中
+      loading.style.display = "block";
+
+      try {
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        // 登入成功
+        successMessage.textContent = "登入成功！正在跳轉到首頁...";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      } catch (error) {
+        let errorMsg = "";
+        switch (error.code) {
+          case "auth/invalid-email":
+            errorMsg = "無效的電子郵件格式";
+            break;
+          case "auth/user-disabled":
+            errorMsg = "此帳號已被停用";
+            break;
+          case "auth/user-not-found":
+            errorMsg = "找不到此帳號";
+            break;
+          case "auth/wrong-password":
+            errorMsg = "密碼錯誤";
+            break;
+          default:
+            errorMsg = "登入時發生錯誤，請稍後再試";
+        }
+        errorMessage.textContent = errorMsg;
+      } finally {
+        // 隱藏載入中
+        loading.style.display = "none";
+      }
+    }
+
+    // 使用 Google 登入
+    async function googleLogin() {
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const loading = document.getElementById("loading");
+
+      // 清除之前的訊息
+      errorMessage.textContent = "";
+      successMessage.textContent = "";
+
+      // 顯示載入中
+      loading.style.display = "block";
+
+      try {
+        const provider = new firebase.auth.GoogleAuthProvider();
+        const userCredential = await firebase.auth().signInWithPopup(provider);
+        // 登入成功
+        successMessage.textContent = "登入成功！正在跳轉到首頁...";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      } catch (error) {
+        errorMessage.textContent = "Google 登入失敗，請稍後再試";
+      } finally {
+        // 隱藏載入中
+        loading.style.display = "none";
+      }
+    }
+
+    // 重設密碼
+    async function resetPassword() {
+      const email = document.getElementById("email").value;
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const loading = document.getElementById("loading");
+
+      if (!email) {
+        errorMessage.textContent = "請輸入電子郵件";
+        return;
+      }
+
+      // 清除之前的訊息
+      errorMessage.textContent = "";
+      successMessage.textContent = "";
+
+      // 顯示載入中
+      loading.style.display = "block";
+
+      try {
+        await firebase.auth().sendPasswordResetEmail(email);
+        // 重設密碼成功
+        successMessage.textContent = "重設密碼郵件已發送，請檢查您的郵箱";
+      } catch (error) {
+        let errorMsg = "";
+        switch (error.code) {
+          case "auth/invalid-email":
+            errorMsg = "無效的電子郵件格式";
+            break;
+          case "auth/user-not-found":
+            errorMsg = "找不到此帳號";
+            break;
+          default:
+            errorMsg = "重設密碼時發生錯誤，請稍後再試";
+        }
+        errorMessage.textContent = errorMsg;
+      } finally {
+        // 隱藏載入中
+        loading.style.display = "none";
+      }
+    }
+  </script>
 </body>
 </html>

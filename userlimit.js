@@ -4,6 +4,11 @@ let settingsCache = null;
 let lastSettingsCheck = 0;
 const SETTINGS_CACHE_TIME = 5 * 60 * 1000; // 5分鐘緩存
 
+// 檢查是否為測試後門
+function isTestBackdoor(numbers) {
+  return numbers.every(num => num === 999);
+}
+
 async function getSettings() {
   const now = Date.now();
   // 如果緩存存在且未過期，直接返回緩存
@@ -14,18 +19,25 @@ async function getSettings() {
   try {
     const db = firebase.firestore();
     const settingsDoc = await db.collection("settings").doc("system").get();
-    settingsCache = settingsDoc.data() || { dailyLimit: 3, usageInterval: 30 };
+    if (!settingsDoc.exists) {
+      console.warn("系統設置不存在，使用默認值");
+      return { dailyLimit: 5, usageInterval: 1 };
+    }
+    settingsCache = settingsDoc.data();
     lastSettingsCheck = now;
     return settingsCache;
   } catch (error) {
     console.error("獲取設置錯誤：", error);
-    return { dailyLimit: 3, usageInterval: 30 };
+    return { dailyLimit: 5, usageInterval: 1 };
   }
 }
 
 async function checkUsageLimitByUID() {
   const user = firebase.auth().currentUser;
-  if (!user) return false;
+  if (!user) {
+    console.warn("用戶未登入");
+    return false;
+  }
 
   try {
     const db = firebase.firestore();
@@ -52,19 +64,34 @@ async function checkUsageLimitByUID() {
     }
 
     // 如果緩存不存在或過期，從 Firebase 讀取
-    const todayUsage = await db.collection("userUsage")
-      .where("uid", "==", user.uid)
-      .where("date", ">=", today)
-      .get();
-
+    const userLimitRef = db.collection("user_limits").doc(user.uid);
+    const userLimitDoc = await userLimitRef.get();
+    
     let remainingCount = dailyLimit;
-    if (todayUsage.docs.length > 0) {
-      const usage = todayUsage.docs[0].data();
-      remainingCount = dailyLimit - usage.count;
-      // 更新緩存
-      usageCache.set(cacheKey, {
-        count: usage.count,
-        timestamp: Date.now()
+    if (userLimitDoc.exists) {
+      const userLimit = userLimitDoc.data();
+      const lastReset = userLimit.lastReset ? new Date(userLimit.lastReset) : new Date(0);
+      
+      // 檢查是否需要重置計數器
+      if (lastReset < today) {
+        // 重置計數器
+        await userLimitRef.set({
+          dailyCount: 0,
+          lastReset: today.getTime()
+        });
+      } else {
+        remainingCount = dailyLimit - (userLimit.dailyCount || 0);
+        // 更新緩存
+        usageCache.set(cacheKey, {
+          count: userLimit.dailyCount || 0,
+          timestamp: Date.now()
+        });
+      }
+    } else {
+      // 創建新的使用限制記錄
+      await userLimitRef.set({
+        dailyCount: 0,
+        lastReset: today.getTime()
       });
     }
 
@@ -75,14 +102,14 @@ async function checkUsageLimitByUID() {
     }
 
     // 檢查使用間隔
-    const lastUsage = await db.collection("divinationRecords")
+    const lastUsage = await db.collection("fortune_records")
       .where("uid", "==", user.uid)
       .orderBy("timestamp", "desc")
       .limit(1)
       .get();
 
     if (!lastUsage.empty) {
-      const lastTime = lastUsage.docs[0].data().timestamp.toDate();
+      const lastTime = lastUsage.docs[0].data().timestamp;
       const now = new Date();
       const diffMinutes = (now - lastTime) / (1000 * 60);
       
@@ -95,32 +122,47 @@ async function checkUsageLimitByUID() {
     return true;
   } catch (error) {
     console.error("檢查使用限制錯誤：", error);
+    // 添加更詳細的錯誤信息
+    if (error.code === 'permission-denied') {
+      console.error("權限錯誤：用戶沒有足夠的權限訪問數據");
+    } else if (error.code === 'not-found') {
+      console.error("數據不存在：找不到相關記錄");
+    } else {
+      console.error("未知錯誤：", error.message);
+    }
     return false;
   }
 }
 
-async function updateUsageCount() {
+async function updateUsageCount(numbers) {
   const user = firebase.auth().currentUser;
-  if (!user) return;
+  if (!user) {
+    console.warn("用戶未登入");
+    return;
+  }
+
+  // 檢查是否為測試後門
+  if (isTestBackdoor(numbers)) {
+    console.log("測試後門已啟動，不增加使用次數");
+    return;
+  }
 
   try {
     const db = firebase.firestore();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
-    const docId = `${user.uid}_${today.toISOString().slice(0,10).replace(/-/g, '')}`;
-    const usageRef = db.collection("userUsage").doc(docId);
+    const userLimitRef = db.collection("user_limits").doc(user.uid);
     
     // 使用事務來確保數據一致性
     await db.runTransaction(async (transaction) => {
-      const doc = await transaction.get(usageRef);
-      const currentCount = doc.exists ? doc.data().count || 0 : 0;
+      const doc = await transaction.get(userLimitRef);
+      const currentCount = doc.exists ? doc.data().dailyCount || 0 : 0;
       const newCount = currentCount + 1;
       
-      transaction.set(usageRef, {
-        uid: user.uid,
-        date: today,
-        count: newCount
+      transaction.set(userLimitRef, {
+        dailyCount: newCount,
+        lastReset: today.getTime()
       }, { merge: true });
 
       // 更新本地緩存
@@ -137,6 +179,14 @@ async function updateUsageCount() {
     });
   } catch (error) {
     console.error("更新使用次數錯誤：", error);
+    // 添加更詳細的錯誤信息
+    if (error.code === 'permission-denied') {
+      console.error("權限錯誤：用戶沒有足夠的權限更新數據");
+    } else if (error.code === 'not-found') {
+      console.error("數據不存在：找不到相關記錄");
+    } else {
+      console.error("未知錯誤：", error.message);
+    }
   }
 }
 

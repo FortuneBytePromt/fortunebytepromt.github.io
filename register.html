@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 註冊 | Fortune Byte</title>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+  <script src="firebase-config.js"></script>
+  <style>
+    :root {
+      --primary-color: #4CAF50;
+      --secondary-color: #45a049;
+      --danger-color: #dc3545;
+      --success-color: #28a745;
+    }
+
+    body {
+      font-family: "Noto Sans TC", sans-serif;
+      background: linear-gradient(to bottom, #fdfcf8, #e8e4d9);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .register-card {
+      background: #ffffffcc;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header img {
+      width: 120px;
+      margin-bottom: 10px;
+    }
+
+    .header h1 {
+      color: #333;
+      margin-bottom: 10px;
+      font-size: 1.8em;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      color: #333;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 1em;
+      transition: border-color 0.3s;
+    }
+
+    .form-group input:focus {
+      border-color: var(--primary-color);
+      outline: none;
+    }
+
+    .btn {
+      display: inline-block;
+      width: 100%;
+      padding: 12px;
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1em;
+      transition: all 0.3s;
+    }
+
+    .btn:hover {
+      background: var(--secondary-color);
+    }
+
+    .error-message {
+      color: var(--danger-color);
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .success-message {
+      color: var(--success-color);
+      margin-top: 5px;
+      font-size: 14px;
+    }
+
+    .nav-links {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9em;
+      color: #888;
+    }
+
+    .nav-links a {
+      color: var(--primary-color);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: var(--secondary-color);
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .loading::after {
+      content: "⏳";
+      animation: loading 1s infinite;
+    }
+
+    @keyframes loading {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="register-card">
+      <div class="header">
+        <img src="icon.png" alt="Fortune Byte Logo">
+        <h1>📝 註冊帳號</h1>
+        <p>創建您的 Fortune Byte 帳號</p>
+      </div>
+
+      <form id="registerForm" onsubmit="return handleRegister(event)">
+        <div class="form-group">
+          <label for="email">電子郵件</label>
+          <input type="email" id="email" required placeholder="請輸入電子郵件">
+        </div>
+
+        <div class="form-group">
+          <label for="password">密碼</label>
+          <input type="password" id="password" required placeholder="請輸入密碼" minlength="6">
+        </div>
+
+        <div class="form-group">
+          <label for="confirmPassword">確認密碼</label>
+          <input type="password" id="confirmPassword" required placeholder="請再次輸入密碼" minlength="6">
+        </div>
+
+        <button type="submit" class="btn">註冊</button>
+        <div id="errorMessage" class="error-message"></div>
+        <div id="successMessage" class="success-message"></div>
+        <div id="loading" class="loading">處理中...</div>
+      </form>
+
+      <div class="nav-links">
+        <p>已有帳號？<a href="login.html">立即登入</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // 處理註冊
+    async function handleRegister(event) {
+      event.preventDefault();
+      
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+      const errorMessage = document.getElementById("errorMessage");
+      const successMessage = document.getElementById("successMessage");
+      const loading = document.getElementById("loading");
+
+      // 清除之前的訊息
+      errorMessage.textContent = "";
+      successMessage.textContent = "";
+
+      // 驗證密碼
+      if (password !== confirmPassword) {
+        errorMessage.textContent = "兩次輸入的密碼不一致";
+        return false;
+      }
+
+      // 顯示載入中
+      loading.style.display = "block";
+
+      try {
+        const userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
+        // 註冊成功
+        successMessage.textContent = "註冊成功！正在跳轉到首頁...";
+        setTimeout(() => {
+          window.location.href = "index.html";
+        }, 2000);
+      } catch (error) {
+        let errorMsg = "";
+        switch (error.code) {
+          case "auth/email-already-in-use":
+            errorMsg = "此電子郵件已被註冊";
+            break;
+          case "auth/invalid-email":
+            errorMsg = "無效的電子郵件格式";
+            break;
+          case "auth/operation-not-allowed":
+            errorMsg = "註冊功能目前未啟用";
+            break;
+          case "auth/weak-password":
+            errorMsg = "密碼強度不足，請使用至少6個字符";
+            break;
+          default:
+            errorMsg = "註冊時發生錯誤，請稍後再試";
+        }
+        errorMessage.textContent = errorMsg;
+      } finally {
+        // 隱藏載入中
+        loading.style.display = "none";
+      }
+
+      return false;
+    }
+  </script>
+</body>
+</html> 

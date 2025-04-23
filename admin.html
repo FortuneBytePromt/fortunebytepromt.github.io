@@ -3,717 +3,780 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📊 後台總攬</title>
+  <title>📊 後台管理 | Fortune Byte</title>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
   <script src="firebase-config.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
+    :root {
+      --primary-color: #3498db;
+      --secondary-color: #2c3e50;
+      --success-color: #28a745;
+      --warning-color: #ffc107;
+      --danger-color: #dc3545;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+    }
+
     body {
       font-family: "Noto Sans TC", sans-serif;
       background: #f4f4f4;
-      margin: 20px;
+      margin: 0;
+      padding: 20px;
       line-height: 1.6;
     }
-    h1 {
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
       text-align: center;
-      color: #2c3e50;
       margin-bottom: 30px;
     }
-    .header-bar {
+
+    .header h1 {
+      color: var(--secondary-color);
+      margin-bottom: 10px;
+    }
+
+    .module-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .module-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .module-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .module-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 10px;
+    }
+
+    .module-card p {
+      color: #666;
+      margin-bottom: 15px;
+    }
+
+    .module-content {
+      display: none;
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      margin-top: 20px;
+    }
+
+    .module-content.active {
+      display: block;
+    }
+
+    .nav-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 20px;
-      flex-wrap: wrap;
-      gap: 10px;
+      padding: 10px 20px;
+      background: white;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
     }
-    .search-box {
-      display: flex;
-      gap: 10px;
-      flex: 1;
-      max-width: 600px;
+
+    .nav-bar a {
+      text-decoration: none;
+      color: var(--primary-color);
+      padding: 8px 15px;
+      border-radius: 5px;
+      transition: all 0.3s ease;
     }
-    #searchBox {
-      flex: 1;
-      padding: 12px;
-      border-radius: 8px;
-      border: 2px solid #e0e0e0;
-      font-size: 1em;
-      transition: border-color 0.3s;
+
+    .nav-bar a:hover {
+      background: var(--primary-color);
+      color: white;
     }
-    #searchBox:focus {
-      border-color: #3498db;
-      outline: none;
-    }
-    .button-group {
-      display: flex;
-      gap: 10px;
-    }
-    button {
-      padding: 12px 20px;
-      background-color: #3498db;
+
+    .btn {
+      display: inline-block;
+      padding: 8px 15px;
+      background: var(--primary-color);
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 5px;
       cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.3s;
+      transition: all 0.3s ease;
     }
-    button:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
+
+    .btn:hover {
+      background: #2980b9;
     }
-    .stats-card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      background: white;
-      border-radius: 10px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    th, td {
-      border: 1px solid #e0e0e0;
-      padding: 12px;
-      text-align: left;
-    }
-    th {
-      background-color: #f8f9fa;
-      font-weight: 600;
-      color: #2c3e50;
-    }
-    .highlight {
-      background-color: #fff3cd;
-      font-weight: bold;
-    }
-    .record-block {
-      background: white;
-      margin: 10px auto;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      max-width: 800px;
-      white-space: pre-wrap;
-      transition: transform 0.3s;
-    }
-    .record-block:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-    }
-    .record-block a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 8px 15px;
-      background-color: #3498db;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      transition: all 0.3s;
-    }
-    .record-block a:hover {
-      background-color: #2980b9;
-      transform: translateY(-2px);
-    }
-    @media (max-width: 768px) {
-      body {
-        margin: 10px;
-      }
-      .header-bar {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .search-box {
-        flex-direction: column;
-        max-width: none;
-      }
-      .button-group {
-        flex-direction: column;
-      }
-      button {
-        width: 100%;
-        justify-content: center;
-      }
-      table {
-        display: block;
-        overflow-x: auto;
-      }
-      th, td {
-        padding: 8px;
-        font-size: 0.9em;
-      }
-      .record-block {
-        padding: 15px;
-        margin: 8px auto;
-      }
-    }
+
     .loading {
       text-align: center;
       padding: 20px;
       color: #666;
-      font-size: 1.1em;
     }
-    .loading::after {
-      content: "⏳";
-      animation: loading 1s infinite;
+
+    @media (max-width: 768px) {
+      .module-grid {
+        grid-template-columns: 1fr;
+      }
     }
-    @keyframes loading {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+
+    .records-list {
+      max-height: 500px;
+      overflow-y: auto;
+      padding: 10px;
     }
-    .advanced-search {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      display: none;
+
+    .record-item {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
-    .advanced-search.active {
-      display: block;
+
+    .record-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      color: #666;
+      font-size: 0.9em;
     }
-    .search-row {
+
+    .record-question {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #2c3e50;
+    }
+
+    .record-details {
       display: flex;
       gap: 15px;
-      margin-bottom: 15px;
-      flex-wrap: wrap;
-    }
-    .search-group {
-      flex: 1;
-      min-width: 200px;
-    }
-    .search-group label {
-      display: block;
-      margin-bottom: 5px;
+      font-size: 0.9em;
       color: #666;
     }
-    .search-group input, .search-group select {
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
       width: 100%;
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-    }
-    .saved-searches {
-      margin-top: 10px;
+      height: 100%;
+      background: rgba(0,0,0,0.5);
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .saved-search {
-      background: #f8f9fa;
-      padding: 5px 10px;
-      border-radius: 15px;
-      cursor: pointer;
-      font-size: 0.9em;
-      border: 1px solid #ddd;
-    }
-    .saved-search:hover {
-      background: #e9ecef;
-    }
-    .settings-panel {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      display: none;
-    }
-    .settings-panel.active {
-      display: block;
-    }
-    .settings-group {
-      margin-bottom: 20px;
-    }
-    .settings-group h3 {
-      margin-bottom: 10px;
-      color: #2c3e50;
-    }
-    .settings-row {
-      display: flex;
+      justify-content: center;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      z-index: 1000;
     }
-    .settings-row label {
-      min-width: 150px;
-    }
-    .settings-row input {
-      padding: 8px;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      width: 200px;
-    }
-    .api-key {
-      font-family: monospace;
-      background: #f8f9fa;
-      padding: 8px;
-      border-radius: 4px;
-      border: 1px solid #ddd;
-      width: 100%;
-      max-width: 400px;
-    }
-    .analytics-panel {
+
+    .modal-content {
       background: white;
-      padding: 20px;
       border-radius: 10px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin-bottom: 20px;
-      display: none;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow: hidden;
     }
-    .analytics-panel.active {
-      display: block;
-    }
-    .chart-container {
-      position: relative;
-      height: 300px;
-      margin-bottom: 20px;
-    }
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      margin-bottom: 20px;
-    }
-    .stat-card {
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
       background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
+      border-bottom: 1px solid #dee2e6;
     }
-    .stat-card h4 {
-      margin: 0 0 10px 0;
+
+    .modal-header h2 {
+      margin: 0;
+      font-size: 1.5em;
       color: #2c3e50;
     }
-    .stat-card .value {
+
+    .modal-header button {
+      background: none;
+      border: none;
       font-size: 1.5em;
-      font-weight: bold;
-      color: #3498db;
+      cursor: pointer;
+      color: #666;
     }
-    .feedback-stats {
-      display: flex;
-      gap: 20px;
-      margin-top: 10px;
-    }
-    .feedback-item {
-      flex: 1;
-      text-align: center;
-      padding: 10px;
-      border-radius: 8px;
-      background: #f8f9fa;
-    }
-    .feedback-item.correct {
-      background: #d4edda;
-      color: #155724;
-    }
-    .feedback-item.incorrect {
-      background: #f8d7da;
-      color: #721c24;
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      max-height: calc(90vh - 70px);
     }
   </style>
 </head>
 <body>
-  <h1>📊 占卜系統後台總覽</h1>
-  
-  <div class="header-bar">
-    <div class="search-box">
-  <input id="searchBox" type="text" placeholder="🔍 輸入 email 查詢該使用者所有占卜記錄...">
-      <button id="searchBtn">🔍 搜尋</button>
-      <button id="advancedSearchBtn">⚙️ 進階搜尋</button>
-    </div>
-    <div class="button-group">
-      <button id="loadBtn">🔄 立即統計</button>
-      <button id="exportBtn">📥 匯出數據</button>
-      <button id="settingsBtn">⚙️ 系統設置</button>
-      <button id="analyticsBtn">📊 數據分析</button>
-    </div>
+  <div class="nav-bar">
+    <a href="index.html">🏠 返回首頁</a>
+    <a href="fortune.html">🔮 開始占卜</a>
   </div>
 
-  <div class="stats-card">
-    <div id="userStats"><p>📦 今日占卜紀錄：載入中...</p></div>
-  </div>
-
-  <div id="loading" class="loading" style="display: none;">正在載入數據...</div>
-  <table id="userTable">
-    <thead>
-      <tr>
-        <th>Email</th>
-        <th>UID</th>
-        <th>今日次數</th>
-        <th>最後使用時間</th>
-        <th>操作</th>
-      </tr>
-    </thead>
-    <tbody></tbody>
-  </table>
-  <div id="searchResult"></div>
-
-  <div id="advancedSearch" class="advanced-search">
-    <div class="search-row">
-      <div class="search-group">
-        <label>時間範圍</label>
-        <input type="date" id="startDate">
-        <input type="date" id="endDate">
-      </div>
-      <div class="search-group">
-        <label>問題類型</label>
-        <select id="questionType">
-          <option value="">全部</option>
-          <option value="工作">工作</option>
-          <option value="感情">感情</option>
-          <option value="健康">健康</option>
-          <option value="財運">財運</option>
-        </select>
-      </div>
-      <div class="search-group">
-        <label>使用次數</label>
-        <input type="number" id="minUsage" placeholder="最少次數">
-        <input type="number" id="maxUsage" placeholder="最多次數">
-      </div>
+  <div class="container">
+    <div class="header">
+      <h1>📊 後台管理</h1>
+      <p>選擇您需要的管理功能</p>
     </div>
-    <div class="saved-searches" id="savedSearches"></div>
-  </div>
 
-  <div id="settingsPanel" class="settings-panel">
-    <div class="settings-group">
-      <h3>使用限制設置</h3>
-      <div class="settings-row">
-        <label>每日使用次數限制</label>
-        <input type="number" id="dailyLimit" min="1" max="100">
+    <div class="module-grid">
+      <div class="module-card" onclick="showModule('statistics')">
+        <h3>📈 數據統計</h3>
+        <p>查看系統使用情況、用戶活躍度等統計數據</p>
       </div>
-      <div class="settings-row">
-        <label>每次使用間隔（分鐘）</label>
-        <input type="number" id="usageInterval" min="1" max="1440">
-      </div>
-    </div>
-    <div class="settings-group">
-      <h3>API 設置</h3>
-      <div class="settings-row">
-        <label>OpenAI API Key</label>
-        <input type="password" id="openaiKey" class="api-key">
-        <button onclick="toggleApiKey('openaiKey')">👁️ 顯示</button>
-      </div>
-      <div class="settings-row">
-        <label>Firebase API Key</label>
-        <input type="password" id="firebaseKey" class="api-key">
-        <button onclick="toggleApiKey('firebaseKey')">👁️ 顯示</button>
-      </div>
-    </div>
-    <button onclick="saveSettings()">💾 保存設置</button>
-  </div>
 
-  <div id="analyticsPanel" class="analytics-panel">
-    <div class="stats-grid">
-      <div class="stat-card">
-        <h4>今日使用總數</h4>
-        <div class="value" id="todayTotal">0</div>
+      <div class="module-card" onclick="showModule('records')">
+        <h3>📝 記錄管理</h3>
+        <p>查看和管理所有占卜記錄</p>
       </div>
-      <div class="stat-card">
-        <h4>本週使用總數</h4>
-        <div class="value" id="weekTotal">0</div>
+
+      <div class="module-card" onclick="showModule('users')">
+        <h3>👥 用戶管理</h3>
+        <p>管理用戶權限和使用情況</p>
       </div>
-      <div class="stat-card">
-        <h4>本月使用總數</h4>
-        <div class="value" id="monthTotal">0</div>
+
+      <div class="module-card" onclick="showModule('settings')">
+        <h3>⚙️ 系統設置</h3>
+        <p>調整系統參數和維護模式</p>
       </div>
     </div>
 
-    <div class="chart-container">
+    <!-- 數據統計模塊 -->
+    <div id="statistics" class="module-content">
+      <h2>📈 數據統計</h2>
+      <div class="stats-grid">
+        <div class="stats-card">
+          <h3>今日使用次數</h3>
+          <p id="todayCount">載入中...</p>
+        </div>
+        <div class="stats-card">
+          <h3>總使用次數</h3>
+          <p id="totalCount">載入中...</p>
+        </div>
+        <div class="stats-card">
+          <h3>活躍用戶數</h3>
+          <p id="activeUsers">載入中...</p>
+        </div>
+        <div class="stats-card">
+          <h3>平均使用次數</h3>
+          <p id="averageUsage">載入中...</p>
+        </div>
+      </div>
       <canvas id="usageChart"></canvas>
     </div>
 
-    <div class="chart-container">
-      <canvas id="questionTypeChart"></canvas>
+    <!-- 記錄管理模塊 -->
+    <div id="records" class="module-content">
+      <h2>📝 記錄管理</h2>
+      <div class="search-box">
+        <input type="text" id="searchBox" placeholder="搜索記錄...">
+        <button onclick="searchRecords()">搜索</button>
+        <button onclick="toggleAdvancedSearch()">高級搜索</button>
+      </div>
+      <div id="advancedSearch" class="advanced-search">
+        <!-- 高級搜索表單 -->
+      </div>
+      <div id="recordsList">
+        <div class="loading">載入中...</div>
+      </div>
     </div>
 
-    <div class="stat-card">
-      <h4>用戶反饋統計</h4>
-      <div class="feedback-stats">
-        <div class="feedback-item correct">
-          <h5>靈驗</h5>
-          <div class="value" id="correctCount">0</div>
-          <div class="percentage" id="correctPercentage">0%</div>
+    <!-- 用戶管理模塊 -->
+    <div id="users" class="module-content">
+      <h2>👥 用戶管理</h2>
+      <div class="search-box">
+        <input type="text" id="userSearchBox" placeholder="搜索用戶...">
+        <button onclick="searchUsers()">搜索</button>
+      </div>
+      <div id="usersList">
+        <div class="loading">載入中...</div>
+      </div>
+    </div>
+
+    <!-- 系統設置模塊 -->
+    <div id="settings" class="module-content">
+      <h2>⚙️ 系統設置</h2>
+      <div class="settings-group">
+        <h3>使用限制</h3>
+        <div class="settings-row">
+          <label>每日使用限制：</label>
+          <input type="number" id="dailyLimit" min="1" max="100">
+          <button onclick="updateDailyLimit()">更新</button>
         </div>
-        <div class="feedback-item incorrect">
-          <h5>未應</h5>
-          <div class="value" id="incorrectCount">0</div>
-          <div class="percentage" id="incorrectPercentage">0%</div>
+      </div>
+      <div class="settings-group">
+        <h3>系統維護</h3>
+        <div class="settings-row">
+          <label>維護模式：</label>
+          <input type="checkbox" id="maintenanceMode">
+          <button onclick="toggleMaintenanceMode()">切換</button>
+        </div>
+      </div>
+      <div class="settings-group">
+        <h3>系統公告</h3>
+        <div class="settings-row">
+          <textarea id="announcement" rows="4" placeholder="輸入系統公告..."></textarea>
+          <button onclick="updateAnnouncement()">更新</button>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    const ADMIN_UID = "fLhFeaiYwsVhDJ0O3ozFWbo2Qv22";
-    let todayRecords = [];
-    let userMap = new Map();
-    let savedSearches = JSON.parse(localStorage.getItem('savedSearches') || '[]');
-    let usageChart = null;
-    let questionTypeChart = null;
+    // 顯示選中的模塊
+    function showModule(moduleId) {
+      // 隱藏所有模塊
+      document.querySelectorAll('.module-content').forEach(module => {
+        module.classList.remove('active');
+      });
+      
+      // 顯示選中的模塊
+      document.getElementById(moduleId).classList.add('active');
+      
+      // 加載模塊數據
+      loadModuleData(moduleId);
+    }
 
-    async function loadSettings() {
-      try {
-        const db = firebase.firestore();
-        const settingsDoc = await db.collection("settings").doc("system").get();
-        const settings = settingsDoc.data() || {};
-        
-        document.getElementById("dailyLimit").value = settings.dailyLimit || 3;
-        document.getElementById("usageInterval").value = settings.usageInterval || 30;
-        document.getElementById("openaiKey").value = settings.openaiKey || "";
-        document.getElementById("firebaseKey").value = settings.firebaseKey || "";
-      } catch (error) {
-        console.error("加載設置錯誤：", error);
-        alert("加載設置時發生錯誤");
+    // 加載模塊數據
+    function loadModuleData(moduleId) {
+      switch(moduleId) {
+        case 'statistics':
+          loadStatistics();
+          break;
+        case 'records':
+          loadRecords();
+          break;
+        case 'users':
+          loadUsers();
+          break;
+        case 'settings':
+          loadSettings();
+          break;
       }
     }
 
-    firebase.auth().onAuthStateChanged(async user => {
-      if (!user || user.uid !== ADMIN_UID) {
-        alert("無權限");
-        location.href = "index.html";
+    // 加載統計數據
+    function loadStatistics() {
+      const db = firebase.firestore();
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      // 獲取今日記錄
+      db.collection("divinationRecords")
+        .where("timestamp", ">=", today)
+        .get()
+        .then(snapshot => {
+          const todayCount = snapshot.size;
+          document.getElementById("todayCount").textContent = todayCount;
+        });
+
+      // 獲取總記錄數
+      db.collection("divinationRecords")
+        .get()
+        .then(snapshot => {
+          const totalCount = snapshot.size;
+          document.getElementById("totalCount").textContent = totalCount;
+        });
+
+      // 獲取活躍用戶數
+      db.collection("divinationRecords")
+        .where("timestamp", ">=", today)
+        .get()
+        .then(snapshot => {
+          const activeUsers = new Set();
+          snapshot.forEach(doc => {
+            activeUsers.add(doc.data().uid);
+          });
+          document.getElementById("activeUsers").textContent = activeUsers.size;
+        });
+
+      // 獲取平均使用次數
+      db.collection("divinationRecords")
+        .get()
+        .then(snapshot => {
+          const userCounts = new Map();
+          snapshot.forEach(doc => {
+            const uid = doc.data().uid;
+            userCounts.set(uid, (userCounts.get(uid) || 0) + 1);
+          });
+          const totalUsers = userCounts.size;
+          const totalUsage = Array.from(userCounts.values()).reduce((a, b) => a + b, 0);
+          const average = totalUsers > 0 ? (totalUsage / totalUsers).toFixed(1) : 0;
+          document.getElementById("averageUsage").textContent = average;
+        });
+
+      // 繪製使用趨勢圖表
+      const ctx = document.getElementById("usageChart").getContext("2d");
+      const dates = [];
+      const counts = [];
+      
+      // 獲取最近30天的數據
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        dates.push(date.toLocaleDateString());
+        
+        const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+        const dayEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
+        
+        db.collection("divinationRecords")
+          .where("timestamp", ">=", dayStart)
+          .where("timestamp", "<", dayEnd)
+          .get()
+          .then(snapshot => {
+            counts.push(snapshot.size);
+            
+            // 當所有數據都收集完畢時，繪製圖表
+            if (counts.length === 30) {
+              new Chart(ctx, {
+                type: "line",
+                data: {
+                  labels: dates,
+                  datasets: [{
+                    label: "每日使用次數",
+                    data: counts,
+                    borderColor: "#3498db",
+                    tension: 0.1
+                  }]
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    title: {
+                      display: true,
+                      text: "近30天使用趨勢"
+                    }
+                  }
+                }
+              });
+            }
+          });
+      }
+    }
+
+    // 加載記錄
+    function loadRecords() {
+      const db = firebase.firestore();
+      const recordsList = document.getElementById("recordsList");
+      recordsList.innerHTML = '<div class="loading">載入中...</div>';
+
+      db.collection("divinationRecords")
+        .orderBy("timestamp", "desc")
+        .limit(50)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            recordsList.innerHTML = '<p>暫無記錄</p>';
+            return;
+          }
+
+          let html = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const time = data.timestamp?.toDate().toLocaleString() || "";
+            html += `
+              <div class="record-block">
+                <p><strong>🧠 問題：</strong>${data.question || "(無內容)"}</p>
+                <p><strong>📘 本卦：</strong>${data.baseGua}（${data.yao}）→${data.changedGua}</p>
+                <p><strong>🕒 時間：</strong>${time}</p>
+                <p><strong>👤 用戶：</strong>${data.email || "(無email)"}</p>
+                <p><strong>📝 類型：</strong>${data.questionType || "(未分類)"}</p>
+              </div>
+            `;
+          });
+          recordsList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("加載記錄錯誤：", error);
+          recordsList.innerHTML = '<p>加載記錄時發生錯誤</p>';
+        });
+    }
+
+    // 加載用戶
+    function loadUsers() {
+      const db = firebase.firestore();
+      const usersList = document.getElementById("usersList");
+      usersList.innerHTML = '<div class="loading">載入中...</div>';
+
+      // 獲取所有用戶的使用記錄
+      db.collection("divinationRecords")
+        .get()
+        .then(snapshot => {
+          const userMap = new Map();
+          
+          // 統計每個用戶的使用情況
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const uid = data.uid;
+            const email = data.email || "(無email)";
+            
+            if (!userMap.has(uid)) {
+              userMap.set(uid, {
+                email,
+                totalUsage: 0,
+                lastUsed: null,
+                questionTypes: new Map()
+              });
+            }
+            
+            const user = userMap.get(uid);
+            user.totalUsage++;
+            
+            const timestamp = data.timestamp?.toDate();
+            if (timestamp && (!user.lastUsed || timestamp > user.lastUsed)) {
+              user.lastUsed = timestamp;
+            }
+            
+            const type = data.questionType || "其他";
+            user.questionTypes.set(type, (user.questionTypes.get(type) || 0) + 1);
+          });
+          
+          // 轉換為數組並排序
+          const users = Array.from(userMap.entries())
+            .map(([uid, data]) => ({
+              uid,
+              ...data,
+              lastUsed: data.lastUsed?.toLocaleString() || "從未使用",
+              questionTypes: Array.from(data.questionTypes.entries())
+                .map(([type, count]) => `${type}: ${count}次`)
+                .join(", ")
+            }))
+            .sort((a, b) => b.totalUsage - a.totalUsage);
+          
+          // 顯示用戶列表
+          if (users.length === 0) {
+            usersList.innerHTML = '<p>暫無用戶數據</p>';
+            return;
+          }
+          
+          let html = '<table>';
+          html += `
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>總使用次數</th>
+                <th>最後使用時間</th>
+                <th>問題類型分布</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+          `;
+          
+          users.forEach(user => {
+            html += `
+              <tr>
+                <td>${user.email}</td>
+                <td>${user.totalUsage}</td>
+                <td>${user.lastUsed}</td>
+                <td>${user.questionTypes}</td>
+                <td>
+                  <button onclick="viewUserRecords('${user.uid}')">查看記錄</button>
+                </td>
+              </tr>
+            `;
+          });
+          
+          html += '</tbody></table>';
+          usersList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("加載用戶錯誤：", error);
+          usersList.innerHTML = '<p>加載用戶數據時發生錯誤</p>';
+        });
+    }
+
+    // 加載設置
+    function loadSettings() {
+      const db = firebase.firestore();
+      
+      db.collection("settings").doc("system").get()
+        .then(doc => {
+          if (doc.exists) {
+            const settings = doc.data();
+            document.getElementById("dailyLimit").value = settings.dailyLimit || 3;
+            document.getElementById("maintenanceMode").checked = settings.maintenanceMode || false;
+            document.getElementById("announcement").value = settings.announcement || "";
+          }
+        })
+        .catch(error => {
+          console.error("加載設置錯誤：", error);
+          alert("加載設置時發生錯誤");
+        });
+    }
+
+    // 更新每日限制
+    function updateDailyLimit() {
+      const dailyLimit = document.getElementById("dailyLimit").value;
+      if (!dailyLimit || dailyLimit < 1 || dailyLimit > 100) {
+        alert("請輸入有效的每日使用限制（1-100）");
         return;
       }
+
       const db = firebase.firestore();
+      db.collection("settings").doc("system").update({
+        dailyLimit: parseInt(dailyLimit),
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert("每日使用限制已更新");
+      })
+      .catch(error => {
+        console.error("更新每日限制錯誤：", error);
+        alert("更新每日限制時發生錯誤");
+      });
+    }
 
-      document.getElementById("loadBtn").addEventListener("click", () => loadStatistics(db));
-      document.getElementById("searchBtn").addEventListener("click", () => {
-        const keyword = document.getElementById("searchBox").value.trim().toLowerCase();
-        if (keyword) searchUser(db, keyword, true);
-      });
-      document.getElementById("advancedSearchBtn").addEventListener("click", () => {
-        document.getElementById("advancedSearch").classList.toggle("active");
-      });
-      document.getElementById("settingsBtn").addEventListener("click", () => {
-        document.getElementById("settingsPanel").classList.toggle("active");
-        if (document.getElementById("settingsPanel").classList.contains("active")) {
-          loadSettings();
-        }
-      });
-      document.getElementById("exportBtn").addEventListener("click", exportData);
-      document.getElementById("searchBox").addEventListener("keypress", (e) => {
-        if (e.key === "Enter") {
-          const keyword = e.target.value.trim().toLowerCase();
-          if (keyword) searchUser(db, keyword, true);
-        }
-      });
-      document.getElementById("analyticsBtn").addEventListener("click", () => {
-        document.getElementById("analyticsPanel").classList.toggle("active");
-        if (document.getElementById("analyticsPanel").classList.contains("active")) {
-          loadAnalytics(db);
-        }
-      });
-
-      // 加載保存的搜索條件
-      loadSavedSearches();
+    // 切換維護模式
+    function toggleMaintenanceMode() {
+      const maintenanceMode = document.getElementById("maintenanceMode").checked;
       
-      // 初始加載今日數據
-      await loadTodayData(db);
-    });
+      const db = firebase.firestore();
+      db.collection("settings").doc("system").update({
+        maintenanceMode,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert(maintenanceMode ? "系統已進入維護模式" : "系統已退出維護模式");
+      })
+      .catch(error => {
+        console.error("切換維護模式錯誤：", error);
+        alert("切換維護模式時發生錯誤");
+      });
+    }
 
-    async function loadTodayData(db) {
-      const loading = document.getElementById("loading");
-      loading.style.display = "block";
+    // 更新系統公告
+    function updateAnnouncement() {
+      const announcement = document.getElementById("announcement").value;
       
-      try {
-        const todayStart = new Date();
-        todayStart.setHours(0, 0, 0, 0);
+      const db = firebase.firestore();
+      db.collection("settings").doc("system").update({
+        announcement,
+        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+      })
+      .then(() => {
+        alert("系統公告已更新");
+      })
+      .catch(error => {
+        console.error("更新系統公告錯誤：", error);
+        alert("更新系統公告時發生錯誤");
+      });
+    }
 
-        // 只獲取今日的記錄
-        const snapshot = await db.collection("divinationRecords")
-          .where("timestamp", ">=", todayStart)
-          .orderBy("timestamp", "desc")
-          .get();
+    // 搜索記錄
+    function searchRecords() {
+      const keyword = document.getElementById("searchBox").value.trim().toLowerCase();
+      if (!keyword) {
+        loadRecords();
+        return;
+      }
 
-        todayRecords = snapshot.docs;
-        userMap.clear();
+      const db = firebase.firestore();
+      const recordsList = document.getElementById("recordsList");
+      recordsList.innerHTML = '<div class="loading">搜索中...</div>';
 
-        // 處理用戶統計
-        todayRecords.forEach(doc => {
-          const data = doc.data();
-          const uid = data.uid;
-          const email = data.email || "(無email)";
-          const timestamp = data.timestamp?.toDate?.();
-
-          if (!userMap.has(uid)) {
-            userMap.set(uid, {
-              email,
-              uid,
-              countToday: 0,
-              lastTime: timestamp
-            });
+      db.collection("divinationRecords")
+        .where("email", "==", keyword)
+        .orderBy("timestamp", "desc")
+        .limit(50)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            recordsList.innerHTML = '<p>找不到符合的記錄</p>';
+            return;
           }
-          const user = userMap.get(uid);
-          if (timestamp > user.lastTime) user.lastTime = timestamp;
-          user.countToday++;
+
+          let html = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const time = data.timestamp?.toDate().toLocaleString() || "";
+            html += `
+              <div class="record-block">
+                <p><strong>🧠 問題：</strong>${data.question || "(無內容)"}</p>
+                <p><strong>📘 本卦：</strong>${data.baseGua}（${data.yao}）→${data.changedGua}</p>
+                <p><strong>🕒 時間：</strong>${time}</p>
+                <p><strong>👤 用戶：</strong>${data.email || "(無email)"}</p>
+                <p><strong>📝 類型：</strong>${data.questionType || "(未分類)"}</p>
+              </div>
+            `;
+          });
+          recordsList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("搜索記錄錯誤：", error);
+          recordsList.innerHTML = '<p>搜索記錄時發生錯誤</p>';
         });
+    }
 
-        // 更新統計信息
-        document.getElementById("userStats").innerHTML = `
-          <p>📦 今日占卜紀錄：${todayRecords.length} 筆</p>
+    // 切換高級搜索
+    function toggleAdvancedSearch() {
+      const advancedSearch = document.getElementById("advancedSearch");
+      if (advancedSearch.style.display === "none") {
+        advancedSearch.innerHTML = `
+          <div class="search-row">
+            <div class="search-group">
+              <label>時間範圍</label>
+              <input type="date" id="startDate">
+              <input type="date" id="endDate">
+            </div>
+            <div class="search-group">
+              <label>問題類型</label>
+              <select id="questionType">
+                <option value="">全部</option>
+                <option value="工作">工作</option>
+                <option value="感情">感情</option>
+                <option value="健康">健康</option>
+                <option value="財運">財運</option>
+                <option value="學業">學業</option>
+                <option value="家庭">家庭</option>
+                <option value="其他">其他</option>
+              </select>
+            </div>
+            <div class="search-group">
+              <label>使用次數</label>
+              <input type="number" id="minUsage" placeholder="最少次數">
+              <input type="number" id="maxUsage" placeholder="最多次數">
+            </div>
+          </div>
+          <button onclick="performAdvancedSearch()">執行搜索</button>
         `;
-
-        // 更新用戶列表
-        updateUserTable();
-      } catch (error) {
-        console.error("加載數據錯誤：", error);
-        alert("加載數據時發生錯誤，請稍後再試");
-      } finally {
-        loading.style.display = "none";
+        advancedSearch.style.display = "block";
+      } else {
+        advancedSearch.style.display = "none";
       }
     }
 
-    function updateUserTable() {
-      const stats = Array.from(userMap.values())
-        .filter(u => u.countToday >= 5)
-        .sort((a, b) => b.countToday - a.countToday);
-
-      const tbody = document.querySelector("#userTable tbody");
-      tbody.innerHTML = "";
-      stats.forEach(u => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td>${u.email}</td>
-          <td>${u.uid}</td>
-          <td>${u.countToday}</td>
-          <td>${u.lastTime?.toLocaleString?.() || ""}</td>
-          <td>
-            <button onclick="searchUser(firebase.firestore(), '${u.email}', true)" style="padding: 6px 12px; font-size: 0.9em;">🔍 查看今日記錄</button>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    async function searchUser(db, keyword, todayOnly = false) {
-        const resultBox = document.getElementById("searchResult");
-      const loading = document.getElementById("loading");
-        resultBox.innerHTML = "";
-      loading.style.display = "block";
-      
-      try {
-        let query = db.collection("divinationRecords")
-          .where("email", "==", keyword)
-          .orderBy("timestamp", "desc");
-
-        if (todayOnly) {
-          const todayStart = new Date();
-          todayStart.setHours(0, 0, 0, 0);
-          query = query.where("timestamp", ">=", todayStart);
-        }
-
-        const result = await query.limit(100).get();
-
-        if (result.empty) {
-          resultBox.innerHTML = `<p style='text-align:center;color:#777;'>找不到該使用者資料</p>`;
-          return;
-        }
-
-        result.docs.forEach(doc => {
-          const d = doc.data();
-          const q = d.question || "(無內容)";
-          const base = d.baseGua;
-          const yao = d.yao;
-          const changed = d.changedGua;
-          const guaData = `你現在是熟悉易經梅花易數數字卦的專家，請根據我的問題進行解析\n嚴格遵循不誠不占、不義不占、不疑不占\n如果有上述三不占情況，請不要幫我占卜\n\n我想問 ${q} 這件事，\n📘 占得 ${base} ${yao}\n之卦：${changed}\n\n👉請以下列的格式回答，每個格式請精簡扼要的回答\n🔮 問題解析\n📘 本卦解析\n🔁 變爻解析\n📙 之卦解析\n🧙‍♂️ 總結與建議`;
-
-          const block = document.createElement("div");
-          const time = d.timestamp?.toDate().toLocaleString() || "";
-          const line = `🧠 ${q}\n📘 ${base} ${yao} → ${changed}\n🕒 ${time}`;
-          block.className = "record-block";
-          block.innerHTML = `${line.replaceAll("\n", "<br>")}<br><br><a target="_blank" href="https://chat.openai.com/?prompt=${encodeURIComponent(guaData)}">🧠 發問至 ChatGPT</a>`;
-          resultBox.appendChild(block);
-        });
-      } catch (error) {
-        console.error("搜索錯誤：", error);
-        alert("搜索時發生錯誤，請稍後再試");
-      } finally {
-        loading.style.display = "none";
-      }
-    }
-
-    async function loadStatistics(db) {
-      await loadTodayData(db);
-    }
-
-    function exportData() {
-      const data = todayRecords.map(doc => {
-        const d = doc.data();
-        return {
-          email: d.email,
-          question: d.question,
-          baseGua: d.baseGua,
-          yao: d.yao,
-          changedGua: d.changedGua,
-          timestamp: d.timestamp?.toDate?.().toLocaleString() || ""
-        };
-      });
-      
-      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = `divination_records_${new Date().toISOString().slice(0,10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function loadSavedSearches() {
-      const container = document.getElementById("savedSearches");
-      container.innerHTML = "";
-      savedSearches.forEach((search, index) => {
-        const div = document.createElement("div");
-        div.className = "saved-search";
-        div.textContent = search.name;
-        div.onclick = () => applySavedSearch(search);
-        container.appendChild(div);
-      });
-    }
-
-    function applySavedSearch(search) {
-      document.getElementById("startDate").value = search.startDate;
-      document.getElementById("endDate").value = search.endDate;
-      document.getElementById("questionType").value = search.questionType;
-      document.getElementById("minUsage").value = search.minUsage;
-      document.getElementById("maxUsage").value = search.maxUsage;
-      performAdvancedSearch();
-    }
-
-    async function performAdvancedSearch() {
+    // 執行高級搜索
+    function performAdvancedSearch() {
       const startDate = document.getElementById("startDate").value;
       const endDate = document.getElementById("endDate").value;
       const questionType = document.getElementById("questionType").value;
       const minUsage = document.getElementById("minUsage").value;
       const maxUsage = document.getElementById("maxUsage").value;
 
-      const search = {
-        startDate,
-        endDate,
-        questionType,
-        minUsage,
-        maxUsage,
-        name: `搜索 ${startDate} 至 ${endDate}`
-      };
-
-      // 保存搜索條件
-      if (!savedSearches.some(s => s.name === search.name)) {
-        savedSearches.push(search);
-        localStorage.setItem('savedSearches', JSON.stringify(savedSearches));
-        loadSavedSearches();
-      }
-
-      // 執行搜索
       const db = firebase.firestore();
+      const recordsList = document.getElementById("recordsList");
+      recordsList.innerHTML = '<div class="loading">搜索中...</div>';
+
       let query = db.collection("divinationRecords");
 
       if (startDate) {
@@ -726,221 +789,206 @@
         query = query.where("questionType", "==", questionType);
       }
 
-      const result = await query.get();
-      const filteredDocs = result.docs.filter(doc => {
-        const data = doc.data();
-        const usageCount = userMap.get(data.uid)?.countToday || 0;
-        return (!minUsage || usageCount >= parseInt(minUsage)) &&
-               (!maxUsage || usageCount <= parseInt(maxUsage));
-      });
+      query.orderBy("timestamp", "desc")
+        .limit(50)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            recordsList.innerHTML = '<p>找不到符合的記錄</p>';
+            return;
+          }
 
-      displaySearchResults(filteredDocs);
+          let html = '';
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const time = data.timestamp?.toDate().toLocaleString() || "";
+            html += `
+              <div class="record-block">
+                <p><strong>🧠 問題：</strong>${data.question || "(無內容)"}</p>
+                <p><strong>📘 本卦：</strong>${data.baseGua}（${data.yao}）→${data.changedGua}</p>
+                <p><strong>🕒 時間：</strong>${time}</p>
+                <p><strong>👤 用戶：</strong>${data.email || "(無email)"}</p>
+                <p><strong>📝 類型：</strong>${data.questionType || "(未分類)"}</p>
+              </div>
+            `;
+          });
+          recordsList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("高級搜索錯誤：", error);
+          recordsList.innerHTML = '<p>搜索記錄時發生錯誤</p>';
+        });
     }
 
-    function displaySearchResults(docs) {
-      const resultBox = document.getElementById("searchResult");
-      resultBox.innerHTML = "";
-      
-      if (docs.length === 0) {
-        resultBox.innerHTML = `<p style='text-align:center;color:#777;'>找不到符合條件的記錄</p>`;
+    // 搜索用戶
+    function searchUsers() {
+      const keyword = document.getElementById("userSearchBox").value.trim().toLowerCase();
+      if (!keyword) {
+        loadUsers();
         return;
       }
 
-      docs.forEach(doc => {
-        const d = doc.data();
-        const block = document.createElement("div");
-        block.className = "record-block";
-        block.innerHTML = `
-          <p><strong>🧠 問題：</strong>${d.question || "(無內容)"}</p>
-          <p><strong>📘 本卦：</strong>${d.baseGua}（${d.yao}）→${d.changedGua}</p>
-          <p><strong>🕒 時間：</strong>${d.timestamp?.toDate().toLocaleString() || ""}</p>
-          <p><strong>👤 用戶：</strong>${d.email}</p>
-        `;
-        resultBox.appendChild(block);
-      });
+      const db = firebase.firestore();
+      const usersList = document.getElementById("usersList");
+      usersList.innerHTML = '<div class="loading">搜索中...</div>';
+
+      db.collection("divinationRecords")
+        .where("email", "==", keyword)
+        .get()
+        .then(snapshot => {
+          if (snapshot.empty) {
+            usersList.innerHTML = '<p>找不到該用戶</p>';
+            return;
+          }
+
+          const userMap = new Map();
+          snapshot.forEach(doc => {
+            const data = doc.data();
+            const uid = data.uid;
+            const email = data.email || "(無email)";
+            
+            if (!userMap.has(uid)) {
+              userMap.set(uid, {
+                email,
+                totalUsage: 0,
+                lastUsed: null,
+                questionTypes: new Map()
+              });
+            }
+            
+            const user = userMap.get(uid);
+            user.totalUsage++;
+            
+            const timestamp = data.timestamp?.toDate();
+            if (timestamp && (!user.lastUsed || timestamp > user.lastUsed)) {
+              user.lastUsed = timestamp;
+            }
+            
+            const type = data.questionType || "其他";
+            user.questionTypes.set(type, (user.questionTypes.get(type) || 0) + 1);
+          });
+
+          const users = Array.from(userMap.entries())
+            .map(([uid, data]) => ({
+              uid,
+              ...data,
+              lastUsed: data.lastUsed?.toLocaleString() || "從未使用",
+              questionTypes: Array.from(data.questionTypes.entries())
+                .map(([type, count]) => `${type}: ${count}次`)
+                .join(", ")
+            }));
+
+          let html = '<table>';
+          html += `
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>總使用次數</th>
+                <th>最後使用時間</th>
+                <th>問題類型分布</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody>
+          `;
+          
+          users.forEach(user => {
+            html += `
+              <tr>
+                <td>${user.email}</td>
+                <td>${user.totalUsage}</td>
+                <td>${user.lastUsed}</td>
+                <td>${user.questionTypes}</td>
+                <td>
+                  <button onclick="viewUserRecords('${user.uid}')">查看記錄</button>
+                </td>
+              </tr>
+            `;
+          });
+          
+          html += '</tbody></table>';
+          usersList.innerHTML = html;
+        })
+        .catch(error => {
+          console.error("搜索用戶錯誤：", error);
+          usersList.innerHTML = '<p>搜索用戶時發生錯誤</p>';
+        });
     }
 
-    function toggleApiKey(id) {
-      const input = document.getElementById(id);
-      input.type = input.type === "password" ? "text" : "password";
-    }
-
-    async function saveSettings() {
-      const dailyLimit = document.getElementById("dailyLimit").value;
-      const usageInterval = document.getElementById("usageInterval").value;
-      const openaiKey = document.getElementById("openaiKey").value;
-      const firebaseKey = document.getElementById("firebaseKey").value;
-
+    // 查看用戶記錄
+    async function viewUserRecords(userId) {
       try {
         const db = firebase.firestore();
-        await db.collection("settings").doc("system").set({
-          dailyLimit: parseInt(dailyLimit),
-          usageInterval: parseInt(usageInterval),
-          openaiKey,
-          firebaseKey,
-          updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+        const recordsRef = db.collection('divinationRecords')
+          .where('uid', '==', userId)
+          .orderBy('timestamp', 'desc');
+        
+        const records = await recordsRef.get();
+        
+        if (records.empty) {
+          alert('該用戶暫無占卜記錄');
+          return;
+        }
+
+        // 創建記錄列表
+        let recordsList = '<div class="records-list">';
+        records.forEach(doc => {
+          const data = doc.data();
+          const date = data.timestamp ? new Date(data.timestamp.toDate()).toLocaleString() : '未知時間';
+          recordsList += `
+            <div class="record-item">
+              <div class="record-header">
+                <span class="record-date">${date}</span>
+                <span class="record-type">${data.questionType}</span>
+              </div>
+              <div class="record-question">${data.question}</div>
+              <div class="record-details">
+                <span>本卦：${data.baseGua}</span>
+                <span>變卦：${data.changedGua}</span>
+                <span>爻：${data.yao}</span>
+              </div>
+            </div>
+          `;
         });
-        alert("設置已保存");
+        recordsList += '</div>';
+
+        // 顯示記錄
+        const modal = document.createElement('div');
+        modal.className = 'modal';
+        modal.innerHTML = `
+          <div class="modal-content">
+            <div class="modal-header">
+              <h2>用戶占卜記錄</h2>
+              <button onclick="this.parentElement.parentElement.parentElement.remove()">×</button>
+            </div>
+            <div class="modal-body">
+              ${recordsList}
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
       } catch (error) {
-        console.error("保存設置錯誤：", error);
-        alert("保存設置時發生錯誤");
+        console.error('獲取用戶記錄錯誤：', error);
+        alert('獲取用戶記錄時發生錯誤');
       }
     }
 
-    async function loadAnalytics(db) {
-      const loading = document.getElementById("loading");
-      loading.style.display = "block";
+    // 初始化頁面
+    document.addEventListener('DOMContentLoaded', () => {
+      // 檢查管理員權限
+      checkAdminAuth();
+    });
+
+    // 檢查管理員權限
+    function checkAdminAuth() {
+      const ADMIN_UID = "fLhFeaiYwsVhDJ0O3ozFWbo2Qv22";
       
-      try {
-        // 獲取時間範圍
-        const now = new Date();
-        const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - 7);
-        const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-
-        // 獲取所有記錄
-        const snapshot = await db.collection("divinationRecords").get();
-        const records = snapshot.docs.map(doc => doc.data());
-
-        // 計算總數
-        const todayTotal = records.filter(r => r.timestamp?.toDate() >= todayStart).length;
-        const weekTotal = records.filter(r => r.timestamp?.toDate() >= weekStart).length;
-        const monthTotal = records.filter(r => r.timestamp?.toDate() >= monthStart).length;
-
-        document.getElementById("todayTotal").textContent = todayTotal;
-        document.getElementById("weekTotal").textContent = weekTotal;
-        document.getElementById("monthTotal").textContent = monthTotal;
-
-        // 更新使用趨勢圖表
-        updateUsageChart(records);
-
-        // 更新問題類型圖表
-        updateQuestionTypeChart(records);
-
-        // 更新反饋統計
-        updateFeedbackStats(records);
-      } catch (error) {
-        console.error("加載分析數據錯誤：", error);
-        alert("加載分析數據時發生錯誤");
-      } finally {
-        loading.style.display = "none";
-      }
-    }
-
-    function updateUsageChart(records) {
-      const ctx = document.getElementById("usageChart").getContext("2d");
-      
-      // 準備數據
-      const dates = [];
-      const counts = [];
-      const now = new Date();
-      
-      // 獲取最近30天的數據
-      for (let i = 29; i >= 0; i--) {
-        const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
-        dates.push(date.toLocaleDateString());
-        
-        const dayStart = new Date(date.getFullYear(), date.getMonth(), date.getDate());
-        const dayEnd = new Date(date.getFullYear(), date.getMonth(), date.getDate() + 1);
-        
-        const count = records.filter(r => {
-          const timestamp = r.timestamp?.toDate();
-          return timestamp >= dayStart && timestamp < dayEnd;
-        }).length;
-        
-        counts.push(count);
-      }
-
-      // 如果圖表已存在，先銷毀
-      if (usageChart) {
-        usageChart.destroy();
-      }
-
-      // 創建新圖表
-      usageChart = new Chart(ctx, {
-        type: "line",
-        data: {
-          labels: dates,
-          datasets: [{
-            label: "每日使用次數",
-            data: counts,
-            borderColor: "#3498db",
-            tension: 0.1
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: "近30天使用趨勢"
-            }
-          }
+      firebase.auth().onAuthStateChanged(user => {
+        if (!user || user.uid !== ADMIN_UID) {
+          alert("無權限訪問管理頁面");
+          location.href = "index.html";
         }
       });
-    }
-
-    function updateQuestionTypeChart(records) {
-      const ctx = document.getElementById("questionTypeChart").getContext("2d");
-      
-      // 統計問題類型
-      const typeCounts = {};
-      records.forEach(record => {
-        const type = record.questionType || "其他";
-        typeCounts[type] = (typeCounts[type] || 0) + 1;
-      });
-
-      // 如果圖表已存在，先銷毀
-      if (questionTypeChart) {
-        questionTypeChart.destroy();
-      }
-
-      // 創建新圖表
-      questionTypeChart = new Chart(ctx, {
-        type: "pie",
-        data: {
-          labels: Object.keys(typeCounts),
-          datasets: [{
-            data: Object.values(typeCounts),
-            backgroundColor: [
-              "#3498db",
-              "#e74c3c",
-              "#2ecc71",
-              "#f1c40f",
-              "#9b59b6"
-            ]
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            title: {
-              display: true,
-              text: "問題類型分布"
-            }
-          }
-        }
-      });
-    }
-
-    function updateFeedbackStats(records) {
-      const feedbacks = records.filter(r => r.feedback);
-      const correct = feedbacks.filter(f => f.feedback === "準").length;
-      const incorrect = feedbacks.filter(f => f.feedback === "不準").length;
-      const total = correct + incorrect;
-
-      document.getElementById("correctCount").textContent = correct;
-      document.getElementById("incorrectCount").textContent = incorrect;
-      
-      if (total > 0) {
-        const correctPercentage = ((correct / total) * 100).toFixed(1);
-        const incorrectPercentage = ((incorrect / total) * 100).toFixed(1);
-        
-        document.getElementById("correctPercentage").textContent = `${correctPercentage}%`;
-        document.getElementById("incorrectPercentage").textContent = `${incorrectPercentage}%`;
-      }
     }
   </script>
 </body>

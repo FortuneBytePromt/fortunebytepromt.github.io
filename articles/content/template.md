@@ -22,4 +22,12 @@
 - 注意事項3
 
 ## 總結
-這裡是文章的總結部分。 
+這裡是文章的總結部分。
+
+function handleError(error) {
+  console.error('Error:', error);
+  // 顯示用戶友好的錯誤信息
+  showUserFriendlyError();
+  // 記錄錯誤
+  logError(error);
+} 

@@ -1,0 +1,56 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 用戶數據規則
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 驗證用戶數據格式
+      allow create: if request.auth != null 
+        && request.resource.data.email is string 
+        && request.resource.data.email.matches(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,}$/i)
+        && request.resource.data.createdAt is number
+        && request.resource.data.lastLogin is number
+        && request.resource.data.isAdmin is bool;
+    }
+
+    // 占卜記錄規則
+    match /fortune_records/{userId}/{recordId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 驗證占卜記錄格式
+      allow create: if request.auth != null 
+        && request.resource.data.question is string 
+        && request.resource.data.question.size() > 0
+        && request.resource.data.questionType is string
+        && request.resource.data.questionType in ['工作', '感情', '健康', '財運', '學業', '家庭', '其他']
+        && request.resource.data.numbers is list
+        && request.resource.data.numbers.size() == 3
+        && request.resource.data.result is string
+        && request.resource.data.timestamp is number;
+    }
+
+    // 用戶使用限制規則
+    match /user_limits/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+      
+      // 驗證使用限制格式
+      allow create, update: if request.auth != null 
+        && request.resource.data.dailyCount is number
+        && request.resource.data.dailyCount >= 0
+        && request.resource.data.lastReset is number;
+    }
+
+    // 日誌規則
+    match /logs/{logId} {
+      allow read: if request.auth != null && request.auth.token.isAdmin == true;
+      allow create: if request.auth != null;
+    }
+
+    // 管理員規則
+    match /admin/{document=**} {
+      allow read, write: if request.auth != null && request.auth.token.isAdmin == true;
+    }
+  }
+} 
