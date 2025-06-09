@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>易經推薦書籍 | Fortune Byte</title>
+  <title>易經推薦書籍與學習資源 | Fortune Byte</title>
   <style>
     body {
       font-family: "Noto Sans TC", sans-serif;
@@ -43,25 +43,62 @@
     .back-link:hover {
       background: #2980b9;
     }
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
+    .content-section {
       background: white;
       border-radius: 15px;
+      padding: 30px;
+      margin-bottom: 30px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
-    .empty-state h2 {
+    .content-section h2 {
       color: #2c3e50;
       margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #3498db;
     }
-    .empty-state p {
-      color: #7f8c8d;
-      margin-bottom: 30px;
+    .resource-list {
+      list-style: none;
+      padding: 0;
     }
-    .empty-state .icon {
-      font-size: 4em;
-      color: #bdc3c7;
-      margin-bottom: 20px;
+    .resource-item {
+      margin-bottom: 25px;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #3498db;
+      transition: transform 0.2s ease;
+    }
+    .resource-item:hover {
+      transform: translateX(10px);
+    }
+    .resource-title {
+      font-size: 1.2em;
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .resource-description {
+      color: #666;
+      margin-bottom: 10px;
+      line-height: 1.6;
+    }
+    .resource-link {
+      color: #3498db;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    .resource-link:hover {
+      text-decoration: underline;
+    }
+    .resource-tag {
+      display: inline-block;
+      padding: 4px 8px;
+      background: #e8f4f8;
+      color: #3498db;
+      border-radius: 4px;
+      font-size: 0.9em;
+      margin-right: 8px;
     }
     .footer {
       text-align: center;
@@ -73,21 +110,72 @@
       .header h1 {
         font-size: 2em;
       }
+      .content-section {
+        padding: 20px;
+      }
+      .resource-item {
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1>📖 易經推薦書籍</h1>
+      <h1>📖 易經推薦書籍與學習資源</h1>
       <a href="index.html" class="back-link">🔙 返回首頁</a>
     </div>
 
-    <div class="empty-state">
-      <div class="icon">📚</div>
-      <h2>書籍推薦準備中</h2>
-      <p>我們正在精心挑選易經相關的優質書籍，敬請期待！</p>
-      <p>如果您有推薦的書籍，歡迎與我們分享。</p>
+    <div class="content-section">
+      <h2>📚 學習資源推薦</h2>
+      <ul class="resource-list">
+        <li class="resource-item">
+          <div class="resource-title">傅佩榮老師 - 周易哲學（台大開放式課程）</div>
+          <div class="resource-description">
+            台大開放式課程中的周易哲學課程，由傅佩榮老師主講，深入淺出地講解易經的哲學思想。
+          </div>
+          <span class="resource-tag">線上課程</span>
+          <span class="resource-tag">YouTube</span>
+          <a href="#" class="resource-link">→ 觀看課程</a>
+        </li>
+
+        <li class="resource-item">
+          <div class="resource-title">傅佩榮老師 - 64爻詳細解說</div>
+          <div class="resource-description">
+            傅佩榮老師在其YouTube頻道上，針對64爻進行了詳細的解說，適合想要深入理解易經的學習者。
+          </div>
+          <span class="resource-tag">YouTube頻道</span>
+          <span class="resource-tag">進階學習</span>
+          <a href="#" class="resource-link">→ 觀看頻道</a>
+        </li>
+
+        <li class="resource-item">
+          <div class="resource-title">易學網 - 64爻文字解說</div>
+          <div class="resource-description">
+            易學網提供了完整的64爻文字解說，內容詳實，是很好的參考資料。
+          </div>
+          <span class="resource-tag">網站資源</span>
+          <span class="resource-tag">文字解說</span>
+          <a href="#" class="resource-link">→ 瀏覽網站</a>
+        </li>
+
+        <li class="resource-item">
+          <div class="resource-title">王溢嘉《易經101》</div>
+          <div class="resource-description">
+            這是一本很好的易經入門書籍，作者以現代的角度詮釋易經，讓讀者更容易理解易經的智慧。
+          </div>
+          <span class="resource-tag">書籍</span>
+          <span class="resource-tag">入門推薦</span>
+          <a href="#" class="resource-link">→ 查看書籍</a>
+        </li>
+      </ul>
+    </div>
+
+    <div class="content-section">
+      <h2>💡 學習建議</h2>
+      <p style="color: #666; line-height: 1.6;">
+        以上推薦的學習資源，從入門到進階都有涵蓋。建議先從台大開放式課程開始，建立基礎概念後，再根據個人興趣選擇深入的方向。傅佩榮老師的講解深入淺出，特別適合初學者。如果想要更系統地學習，可以參考王溢嘉的《易經101》，這本書提供了很好的入門指引。
+      </p>
     </div>
 
     <div class="footer">

@@ -1,206 +1,189 @@
 <!DOCTYPE html>
-<html lang="zh-Hant">
+<html lang="zh-TW">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>📚 使用說明 | Fortune Byte</title>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-  <style>
-    /* 全局樣式 */
-    :root {
-      --primary-color: #3498db;
-      --secondary-color: #2c3e50;
-      --font-family: "Noto Sans TC", sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FortuneByte - 文章列表</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-bg: #f5f6fa;
+        }
 
-    /* 基礎樣式 */
-    body {
-      font-family: var(--font-family);
-      line-height: 1.6;
-      color: var(--secondary-color);
-      background: #f5f7fa;
-      margin: 0;
-      padding: 0;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* 容器樣式 */
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-    }
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
 
-    /* 導航欄樣式 */
-    .nav-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 30px;
-      padding: 10px 20px;
-      background: white;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
 
-    .nav-bar a {
-      text-decoration: none;
-      color: var(--primary-color);
-      padding: 8px 15px;
-      border-radius: 5px;
-      transition: all 0.3s ease;
-    }
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
 
-    .nav-bar a:hover {
-      background: var(--primary-color);
-      color: white;
-    }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
 
-    /* 文章容器樣式 */
-    .article-container {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-      margin: 20px auto;
-      max-width: 800px;
-    }
+        .category-section {
+            background: white;
+            border-radius: 10px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
 
-    /* 載入動畫 */
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(0,0,0,0.1);
-      border-radius: 50%;
-      border-top-color: var(--primary-color);
-      animation: spin 1s ease-in-out infinite;
-    }
+        .category-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
+        .article-list {
+            list-style: none;
+        }
 
-    /* 響應式設計 */
-    @media (max-width: 768px) {
-      .container {
-        padding: 10px;
-      }
-      
-      .article-container {
-        padding: 20px;
-      }
-      
-      .nav-bar {
-        flex-direction: column;
-        gap: 10px;
-      }
-    }
-  </style>
+        .article-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: var(--light-bg);
+            border-radius: 5px;
+            transition: transform 0.2s;
+        }
+
+        .article-item:hover {
+            transform: translateX(10px);
+        }
+
+        .article-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            display: block;
+            font-size: 1.1rem;
+        }
+
+        .article-link:hover {
+            color: var(--accent-color);
+        }
+
+        .article-date {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+
+            .category-section {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-  <div class="nav-bar">
-    <a href="index.html">🏠 返回首頁</a>
-    <a href="../fortune.html">🔮 開始占卜</a>
-  </div>
+    <header>
+        <div class="container">
+            <h1>FortuneByte 文章列表</h1>
+            <p>探索易經、占卜與生活智慧</p>
+        </div>
+    </header>
 
-  <div class="article-container" id="articleContent">
-    <div class="loading">載入中...</div>
-  </div>
+    <main class="container">
+        <!-- 易經內容深度學習 -->
+        <section class="category-section">
+            <h2 class="category-title">易經內容深度學習</h2>
+            <ul class="article-list">
+                <li class="article-item">
+                    <a href="Y_0001.html" class="article-link">易經基礎入門：64卦對照表</a>                  
+                </li>
+                <li class="article-item">
+                    <a href="Y_0002.html" class="article-link">卦辭爻辭：乾卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0003.html" class="article-link">卦辭爻辭：兌卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0004.html" class="article-link">卦辭爻辭：離卦行</a>                    
+                </li>                
+                <li class="article-item">
+                    <a href="Y_0005.html" class="article-link">卦辭爻辭：震卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0006.html" class="article-link">卦辭爻辭：巽卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0007.html" class="article-link">卦辭爻辭：坎卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0008.html" class="article-link">卦辭爻辭：艮卦行</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="Y_0009.html" class="article-link">卦辭爻辭：坤卦行</a>
+                </li>
+                <!-- 更多文章將在此添加 -->
+            </ul>
+        </section>
 
-  <script>
-    // 配置 marked
-    marked.setOptions({
-      breaks: true,
-      gfm: true
-    });
+        <!-- 占卜實例驗證 -->
+        <section class="category-section">
+            <h2 class="category-title">占卜實例驗證</h2>
+            <ul class="article-list">
+                <li class="article-item">
+                    <a href="E_0001.html" class="article-link">占卜案例分享1 審核結果的驗證</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="E_0002.html" class="article-link">占卜案例：信任的抉擇</a>                    
+                </li>
+                <!-- 更多文章將在此添加 -->
+            </ul>
+        </section>
 
-    // 文章內容
-    const articleContent = `# 易經數字卦占卜使用指南
+        <!-- 隨手記 -->
+        <section class="category-section">
+            <h2 class="category-title">隨手記</h2>
+            <ul class="article-list">
+                <li class="article-item">
+                    <a href="F_0001.html" class="article-link">為什麼要使用數字卦系統</a>                    
+                </li>
+                <li class="article-item">
+                    <a href="F_0002.html" class="article-link">六十四卦的排列奧秘</a>                    
+                </li>
+                <!-- 更多文章將在此添加 -->
+            </ul>
+        </section>
+    </main>
 
-## 簡介
-易經數字卦是一種結合易經智慧與現代科技的占卜方式，通過輸入三個數字來獲得卦象，並結合 ChatGPT 的解析，為您提供生活指引。
-
-## 使用步驟
-
-### 1. 選擇問題類型
-首先，請從以下類型中選擇您的問題類別：
-- 工作：職場發展、工作選擇、升遷機會等
-- 感情：感情發展、婚姻問題、人際關係等
-- 健康：身體狀況、疾病預後、養生建議等
-- 財運：投資理財、事業發展、財運走向等
-- 學業：考試升學、學習方向、研究發展等
-- 家庭：家庭關係、親子問題、家務處理等
-- 其他：不屬於上述類別的問題
-
-### 2. 輸入問題
-請用簡潔明確的語言描述您的問題，例如：
-- 「我最近的工作發展如何？」
-- 「這段感情是否值得繼續？」
-- 「這個投資機會是否適合？」
-
-### 3. 輸入數字
-您需要輸入三個三位數（100-999）：
-- 第一個數字：代表下卦
-- 第二個數字：代表上卦
-- 第三個數字：代表變爻
-
-您可以使用以下方式獲取數字：
-- 點擊「隨機生成」按鈕
-- 自行選擇有意義的數字
-- 根據當下時間自動生成
-
-### 4. 啟動占卜
-點擊「啟動占卜」按鈕後，系統會：
-1. 計算卦象
-2. 生成解析
-3. 提供建議
-
-## 解析內容
-系統會提供以下解析：
-1. 本卦解析：說明當前整體局勢
-2. 爻辭白話解釋：解釋卦象的具體含義
-3. 結合爻辭回答問題：針對您的具體問題提供解答
-4. 總結與建議：提供行動建議
-
-## 使用須知
-1. 誠心誠意：問卦前請平心靜氣，真誠面對問題
-2. 問題清晰：一次只問一個具體問題
-3. 避免頻問：同一問題不宜重複占卦
-4. 每日限制：每天最多使用三次
-5. 僅供參考：結果仍需結合您的判斷
-
-## 注意事項
-- 本系統由 ChatGPT 協助解卦，僅供參考
-- 如需更詳細的解析，可以點擊「重看解析」按鈕
-- 您可以在「我的占卜紀錄」中查看歷史記錄
-- 歡迎提供反饋，幫助我們改進系統
-
-## 使用建議
-1. 選擇安靜的環境
-2. 保持專注的心態
-3. 仔細閱讀解析內容
-4. 結合實際情況思考
-5. 適時記錄重要建議
-
-希望這個工具能為您的生活提供有益的指引。如有任何問題，歡迎聯繫我們。`;
-
-    // 解析並顯示文章
-    function displayArticle() {
-      try {
-        const html = marked.parse(articleContent);
-        document.getElementById('articleContent').innerHTML = html;
-      } catch (error) {
-        console.error('Error parsing article:', error);
-        document.getElementById('articleContent').innerHTML = `
-          <div class="error">
-            <h2>解析失敗</h2>
-            <p>抱歉，文章解析失敗，請稍後再試。</p>
-          </div>
-        `;
-      }
-    }
-
-    // 頁面載入時執行
-    window.onload = displayArticle;
-  </script>
+    <footer class="container" style="text-align: center; padding: 2rem 0; color: #666;">
+        <p>© 2024 FortuneByte. All rights reserved.</p>
+    </footer>
 </body>
-</html> 
+</html>

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>占卜案例：信任的抉擇 - FortuneByte</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-bg: #f5f6fa;
+            --border-color: #ddd;
+            --night-color: #2c3e50;
+            --moon-color: #f1c40f;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background-color: var(--night-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::after {
+            content: "🌙";
+            position: absolute;
+            right: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-title {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .article-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--light-bg);
+            border-radius: 10px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .divination-box {
+            background: #f8f9fa;
+            border-left: 5px solid var(--moon-color);
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .hexagram-display {
+            text-align: center;
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .hexagram-symbol {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+        }
+
+        .hexagram-name {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .hexagram-line {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 1rem;
+        }
+
+        .interpretation {
+            background: #e8f4f8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border: 1px solid #b8e2f2;
+        }
+
+        .reflection {
+            font-style: italic;
+            color: var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-color);
+            background: #f8f9fa;
+        }
+
+        .navigation {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navigation a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>FortuneByte</h1>
+            <p>易經智慧與生活實踐</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">占卜案例：信任的抉擇</h1>
+                <div class="article-meta">
+                    發布日期：2024-03-31 | 分類：占卜實例驗證
+                </div>
+            </div>
+
+            <div class="navigation">
+                <a href="articles.html">← 返回文章列表</a>
+            </div>
+
+            <div class="article-content">
+                <div class="section">
+                    <h2 class="section-title">深夜的思考</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+                        半夜睡不著，來記錄一下這段心情。<br>
+                        我正在思考一件事——<br>
+                        到底，要不要信任那個人？
+                    </p>
+                </div>
+
+                <div class="divination-box">
+                    <h3 style="color: var(--night-color); margin-bottom: 1rem;">📘 起卦結果</h3>
+                    <div class="hexagram-display">
+                        <div class="hexagram-symbol">䷗</div>
+                        <div class="hexagram-name">地雷復</div>
+                        <div class="hexagram-line">六二</div>
+                    </div>
+                </div>
+
+                <div class="interpretation">
+                    <h3 style="color: var(--primary-color); margin-bottom: 1rem;">爻辭解析</h3>
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                        「休復，吉。」<br>
+                        「休」代表善、美好。這句話的意思是：<br>
+                        一個人若能平和地回來、不再犯錯，那是值得讚許的。<br>
+                        就像走過彎路的人，終究能找到回家的路。
+                    </p>
+                    <div style="color: var(--accent-color); font-weight: bold; margin-top: 1rem;">
+                        ✨ 這是一種「不二過」的象徵。
+                    </div>
+                </div>
+
+                <div class="reflection">
+                    <p style="font-size: 1.1rem;">
+                        📖 依卦象來看，是可以信任的。<br>
+                        明天中午也會知道結果，但現在的我，<br>
+                        還是有點忐忑不安……<br>
+                        也許修煉還不夠，
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">延伸閱讀</h2>
+                    <ul style="list-style-type: none;">
+                        <li style="margin: 0.5rem 0;">
+                            <a href="E_0001.html" style="color: var(--accent-color); text-decoration: none;">
+                                → 占卜案例分享1 審核結果的驗證
+                            </a>
+                        </li>
+                        <li style="margin: 0.5rem 0;">
+                            <a href="Y_0001.html" style="color: var(--accent-color); text-decoration: none;">
+                                → 易經基礎入門：64卦對照表
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="container" style="text-align: center; padding: 2rem 0; color: #666;">
+        <p>© 2024 FortuneByte. All rights reserved.</p>
+    </footer>
+</body>
+</html> 

@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六十四卦的排列奧秘 - FortuneByte</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #34495e;
+            --accent-color: #3498db;
+            --text-color: #333;
+            --light-bg: #f5f6fa;
+            --border-color: #ddd;
+            --yang-color: #e74c3c;
+            --yin-color: #3498db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--light-bg);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 2rem 0;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .article-header {
+            margin-bottom: 2rem;
+        }
+
+        .article-title {
+            font-size: 2.2rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+        }
+
+        .article-meta {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+        }
+
+        .article-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: var(--light-bg);
+            border-radius: 10px;
+        }
+
+        .section-title {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--accent-color);
+        }
+
+        .highlight-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 5px;
+        }
+
+        .quote {
+            font-style: italic;
+            color: var(--secondary-color);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid var(--accent-color);
+            background: #f8f9fa;
+        }
+
+        .example-box {
+            background: #e8f4f8;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-radius: 8px;
+            border: 1px solid #b8e2f2;
+        }
+
+        .hexagram-pair {
+            display: flex;
+            justify-content: space-around;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .hexagram-item {
+            text-align: center;
+        }
+
+        .hexagram-symbol {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .hexagram-name {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .navigation {
+            margin: 2rem 0;
+            padding: 1rem;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .navigation a {
+            color: var(--accent-color);
+            text-decoration: none;
+            margin-right: 1rem;
+        }
+
+        .navigation a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .hexagram-pair {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>FortuneByte</h1>
+            <p>易經智慧與生活實踐</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <article>
+            <div class="article-header">
+                <h1 class="article-title">六十四卦的排列奧秘</h1>
+                <div class="article-meta">
+                    發布日期：2024-03-31 | 分類：隨手記
+                </div>
+            </div>
+
+            <div class="navigation">
+                <a href="articles.html">← 返回文章列表</a>
+            </div>
+
+            <div class="article-content">
+                <div class="section">
+                    <h2 class="section-title">序卦傳：易經的「關卡設計說明書」</h2>
+                    <p style="font-size: 1.2rem; margin-bottom: 1rem;">
+                        《易經》的六十四卦，其排列順序並非隨意，而是源自《序卦傳》。這部古老的文獻，為孔子所作，猶如《易經》的「關卡設計說明書」，為我們揭示了卦序的深層邏輯。
+                    </p>
+                </div>
+
+                <div class="highlight-box">
+                    <h3 style="color: #856404; margin-bottom: 1rem;">📜 二二相耦，非覆即變</h3>
+                    <p style="font-size: 1.1rem;">
+                        這句話揭示了六十四卦排列的核心法則：六十四卦可以兩兩成對，共組成三十二對。每一對卦，要麼是上下顛倒的「覆卦」，要麼是陰陽互換的「變卦」。
+                    </p>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">覆卦與變卦的奧秘</h2>
+                    
+                    <div class="example-box">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">覆卦示例</h3>
+                        <div class="hexagram-pair">
+                            <div class="hexagram-item">
+                                <div class="hexagram-symbol">䷂</div>
+                                <div class="hexagram-name">水雷屯</div>
+                                <div style="color: #666; font-size: 0.9rem;">坎上震下</div>
+                            </div>
+                            <div style="display: flex; align-items: center; color: #666;">
+                                ↓ 上下顛倒 ↓
+                            </div>
+                            <div class="hexagram-item">
+                                <div class="hexagram-symbol">䷃</div>
+                                <div class="hexagram-name">山水蒙</div>
+                                <div style="color: #666; font-size: 0.9rem;">艮上坎下</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="example-box">
+                        <h3 style="color: var(--primary-color); margin-bottom: 1rem;">變卦示例</h3>
+                        <div class="hexagram-pair">
+                            <div class="hexagram-item">
+                                <div class="hexagram-symbol">䷀</div>
+                                <div class="hexagram-name">乾為天</div>
+                                <div style="color: #666; font-size: 0.9rem;">全陽</div>
+                            </div>
+                            <div style="display: flex; align-items: center; color: #666;">
+                                ↓ 陰陽互換 ↓
+                            </div>
+                            <div class="hexagram-item">
+                                <div class="hexagram-symbol">䷁</div>
+                                <div class="hexagram-name">坤為地</div>
+                                <div style="color: #666; font-size: 0.9rem;">全陰</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quote">
+                    「天道人事，恆以相易而相反，又以相反而復初。」
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">排列的智慧</h2>
+                    <p style="font-size: 1.1rem; margin-bottom: 1rem;">
+                        這種對應關係，不僅展示了卦象之間的變化，也體現了《易經》中「相反相成」的哲理。通過這種排列方式，我們可以：
+                    </p>
+                    <ul style="list-style-type: none; margin: 1rem 0;">
+                        <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--accent-color);">•</span>
+                            只需記住三十二對卦象，便能掌握整部《易經》的卦序
+                        </li>
+                        <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--accent-color);">•</span>
+                            理解卦象之間的內在聯繫和變化規律
+                        </li>
+                        <li style="margin: 0.5rem 0; padding-left: 1.5rem; position: relative;">
+                            <span style="position: absolute; left: 0; color: var(--accent-color);">•</span>
+                            體會《易經》中蘊含的辯證思維和宇宙觀
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="section">
+                    <h2 class="section-title">延伸閱讀</h2>
+                    <ul style="list-style-type: none;">
+                        <li style="margin: 0.5rem 0;">
+                            <a href="Y_0001.html" style="color: var(--accent-color); text-decoration: none;">
+                                → 易經基礎入門：64卦對照表
+                            </a>
+                        </li>
+                        <li style="margin: 0.5rem 0;">
+                            <a href="F_0001.html" style="color: var(--accent-color); text-decoration: none;">
+                                → 為什麼要使用數字卦系統
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <footer class="container" style="text-align: center; padding: 2rem 0; color: #666;">
+        <p>© 2024 FortuneByte. All rights reserved.</p>
+    </footer>
+</body>
+</html> 

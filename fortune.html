@@ -241,8 +241,25 @@
       <h1 style="margin:0;font-size:1.8em;">🔮 Fortune Byte 數字卦占卜</h1>
       <div class="button-group">
         <a class="button-link" href="index.html">🏠 返回首頁</a>
-        <a class="button-link" href="history.html">📜 我的占卜紀錄</a>
-        <button class="button-link" onclick="logout()">🚪 登出</button>
+        <a class="button-link" href="books.html">📚 學習資源</a>
+        <a class="button-link" id="historyLink" href="history.html" style="display: none;">📜 我的占卜紀錄</a>
+        <button class="button-link" id="loginBtn" onclick="login()" style="display: none;">🔑 登入</button>
+        <button class="button-link" id="logoutBtn" onclick="logout()" style="display: none;">🚪 登出</button>
+      </div>
+    </div>
+
+    <div class="section">
+      <div id="loginNotice" class="warning" style="display: none;">
+        <span>🔔</span>
+        <div>
+          <strong>提示：</strong>您尚未登入。登入後可以：
+          <ul style="margin: 5px 0 0 20px;">
+            <li>保存占卜記錄</li>
+            <li>查看歷史占卜</li>
+            <li>追蹤每日使用次數</li>
+          </ul>
+          <a href="login.html" class="button-link" style="margin-top: 10px; display: inline-block;">立即登入</a>
+        </div>
       </div>
     </div>
 
@@ -308,12 +325,39 @@
 
   <script>
     let db, isProcessing = false, lastCheckDate = null, dailyLimitOk = true;
+    let currentUser = null;
+
+    // 檢查登入狀態並更新UI
     firebase.auth().onAuthStateChanged(user => {
-      if (!user) { alert('請先登入！'); window.location.href = 'login.html'; }
-      else { db = firebase.firestore(); }
+      currentUser = user;
+      const historyLink = document.getElementById('historyLink');
+      const loginBtn = document.getElementById('loginBtn');
+      const logoutBtn = document.getElementById('logoutBtn');
+      const loginNotice = document.getElementById('loginNotice');
+
+      if (user) {
+        // 已登入狀態
+        db = firebase.firestore();
+        historyLink.style.display = 'inline-block';
+        loginBtn.style.display = 'none';
+        logoutBtn.style.display = 'inline-block';
+        loginNotice.style.display = 'none';
+      } else {
+        // 未登入狀態
+        db = null;
+        historyLink.style.display = 'none';
+        loginBtn.style.display = 'inline-block';
+        logoutBtn.style.display = 'none';
+        loginNotice.style.display = 'block';
+      }
     });
 
+    function login() {
+      window.location.href = 'login.html';
+    }
+
     async function ensureUsageLimit() {
+      if (!currentUser) return true; // 未登入用戶不限制使用次數
       const today = new Date().toISOString().slice(0,10);
       if (lastCheckDate === today) return dailyLimitOk;
       lastCheckDate = today;
@@ -344,9 +388,11 @@
       calcBtn.disabled = true;
       loading.style.display = 'block';
 
-      const user = firebase.auth().currentUser;
-      if (!user || !db) { reset(); return; }
-      if (!await ensureUsageLimit()) { reset(); return; }
+      if (!await ensureUsageLimit()) { 
+        alert('您今日的使用次數已達上限，請明天再試。');
+        reset();
+        return;
+      }
 
       const questionType = document.getElementById('questionType').value;
       const q = document.getElementById('question').value.trim();
@@ -460,32 +506,34 @@
         lastPrompt = result;
         openInChatGPT();
 
-        // 保存記錄
-        const batch = db.batch();
-        
-        // 如果不是測試後門，才更新使用次數
-        if (!(n1 === 999 && n2 === 999 && n3 === 999)) {
-          // 更新使用次數
-          const today = new Date().toISOString().slice(0,10).replace(/-/g, '');
-          const docId = `${user.uid}_${today}`;
-          const usageRef = db.collection('userUsage').doc(docId);
-          batch.set(usageRef, { count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+        // 保存記錄（僅登入用戶）
+        if (currentUser && db) {
+          const batch = db.batch();
+          
+          // 如果不是測試後門，才更新使用次數
+          if (!(n1 === 999 && n2 === 999 && n3 === 999)) {
+            const today = new Date().toISOString().slice(0,10).replace(/-/g, '');
+            const docId = `${currentUser.uid}_${today}`;
+            const usageRef = db.collection('userUsage').doc(docId);
+            batch.set(usageRef, { count: firebase.firestore.FieldValue.increment(1) }, { merge: true });
+          }
+          
+          // 添加占卜記錄
+          const recordRef = db.collection('divinationRecords').doc();
+          batch.set(recordRef, {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            questionType: questionType,
+            question: q,
+            baseGua: baseJsonKey,
+            changedGua: changedJson,
+            yao: baseYaoName,
+            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+          });
+          
+          await batch.commit();
         }
-        
-        // 添加占卜記錄
-        const recordRef = db.collection('divinationRecords').doc();
-        batch.set(recordRef, {
-          uid: user.uid,
-          email: user.email,
-          questionType: questionType,
-          question: q,
-          baseGua: baseJsonKey,
-          changedGua: changedJson,
-          yao: baseYaoName,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        
-        await batch.commit();
+
       } catch (error) {
         console.error("占卜過程發生錯誤:", error);
         alert("占卜過程發生錯誤，請稍後再試");
