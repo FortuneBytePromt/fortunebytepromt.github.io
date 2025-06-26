@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8">
+  <title>易經揲蓍法專頁 | Fortune Byte</title>
+  <style>
+    body { font-family: "Noto Sans TC", sans-serif; background: #f5f7fa; padding: 30px; }
+    .output { background: #fffaf0; border: 1px solid #e0e0e0; padding: 20px; border-radius: 10px; margin-top: 20px; }
+    button { padding: 10px 20px; border-radius: 20px; border: none; background: #3498db; color: #fff; font-size: 1em; cursor: pointer; }
+    button:hover { background: #2980b9; }
+    .section { background: white; padding: 25px; margin-bottom: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    h2 { margin-top: 0; }
+  </style>
+  <script src="64gua.js"></script>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941"
+    crossorigin="anonymous"></script>
+</head>
+<body>
+  <h1>🌿 易經揲蓍法專頁</h1>
+  <div class="section">
+    <h2>自動產生一卦</h2>
+    <div class="input-group">
+      <label for="question">請輸入你的卜卦問題：</label>
+      <textarea id="question" rows="2" style="width:100%;max-width:400px;"></textarea>
+    </div>
+    <button onclick="generateYarrowHexagram()">🔮 自動產生一卦</button>
+    <div id="yarrowResult" class="output"></div>
+    <details style="margin-top:20px;">
+      <summary style="font-weight:bold;cursor:pointer;">點此展開揲蓍法詳細步驟說明</summary>
+      <div style="margin-top:10px;text-align:left;">
+        <h3>1. 蓍草準備：數量與預備</h3>
+        <p>傳統《易經》筮卦採用蓍草莖作為工具，一般需要準備 <b>50根蓍草</b>。正式起卦時先將50根蓍草取出1根不用，留下 <b>49根</b> 作為筮算之用。筮前靜心凝神，以示對占卜過程的重視。</p>
+        <h3>2. "三變"流程：初變、中變、終變</h3>
+        <ol>
+          <li><b>分二</b>：將49根蓍草隨機分成兩堆，象徵陰陽兩儀。</li>
+          <li><b>掛一</b>：從右手那堆取出1根，夾於指間。</li>
+          <li><b>揲四</b>：分別對左右兩堆進行"四根一數"的計數，取出餘數（若餘數為0則視為4）。</li>
+          <li><b>歸奇</b>：將所有餘數合併，象徵"歸奇於扐以象閏"。</li>
+        </ol>
+        <p>完成一次四營後，從原先49根中取走4、5、8或9根，剩餘蓍草再重複三次，稱為"三變"。</p>
+        <h3>3. 三次變化定爻：爻象計算與判讀</h3>
+        <p>三變後剩下24、28、32或36根，除以4得6、7、8、9，分別代表老陰、少陽、少陰、老陽。六爻由下往上排列，畫卦時以"—"為陽、"--"為陰，老陽○、老陰×標記。</p>
+        <h3>4. 六爻成卦：組成整體卦象</h3>
+        <p>六爻皆經三變，共十八次操作，得六個爻象，組成本卦。若有變爻（老陰、老陽），則陰陽互換得變卦。可參照卦辭、爻辭解讀。</p>
+      </div>
+    </details>
+  </div>
+  <div class="section">
+    <h2>進階互動揲蓍法</h2>
+    <div id="yarrowStepArea" class="output" style="margin-bottom:20px;"></div>
+    <button id="yarrowStepBtn" onclick="yarrowStep()">開始第一爻三變</button>
+    <button id="yarrowResetBtn" onclick="yarrowReset()" style="display:none;">重置</button>
+    <div id="yarrowAdvancedResult" class="output" style="margin-top:20px;"></div>
+  </div>
+  <script>
+    // 揲蓍法三變流程
+    function yarrowThreeChanges() {
+      let remain = 49;
+      let steps = [];
+      for (let i = 0; i < 3; i++) {
+        let left = Math.floor(Math.random() * (remain - 1)) + 1;
+        let right = remain - left;
+        right -= 1;
+        let leftRemain = left % 4; if (leftRemain === 0) leftRemain = 4;
+        let rightRemain = right % 4; if (rightRemain === 0) rightRemain = 4;
+        let remove = 1 + leftRemain + rightRemain;
+        remain -= remove;
+        steps.push(remove);
+      }
+      if (![24,28,32,36].includes(remain)) return yarrowThreeChanges();
+      return {remain, steps, yao: remain/4};
+    }
+
+    // 自動產生一卦
+    function generateYarrowHexagram() {
+      const q = document.getElementById('question')?.value?.trim() || '';
+      const yaoArr = [];
+      for(let i=0;i<6;i++) {
+        yaoArr.push(yarrowThreeChanges().yao);
+      }
+      let lines = yaoArr.slice();
+      let changed = yaoArr.map(v=>v===6?7:v===9?8:v);
+      let changePos = yaoArr.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
+      const baseInfo = getFullHexagramInfo(lines);
+      const changedInfo = getFullHexagramInfo(changed);
+      let html = `<b>我想要卜問的問題是：</b> ${q||'...'}<br>`;
+      html += `<b>本卦：</b> ${baseInfo.name}（${baseInfo.number}）<br>`;
+      if(baseInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${baseInfo.text}</div>`;
+      html += `<b>變卦：</b> ${changedInfo.name}（${changedInfo.number}）<br>`;
+      if(changedInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${changedInfo.text}</div>`;
+      let yaoNames = ['初','二','三','四','五','上'];
+      let baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(baseInfo.number).padStart(2,'0')));
+      let changedJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(changedInfo.number).padStart(2,'0')));
+      let yaoKeys = Object.keys(guaData[baseJsonKey]?.['爻辭'] || {});
+      let changedYaoKeys = Object.keys(guaData[changedJsonKey]?.['爻辭'] || {});
+      html += getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys);
+      let interpret = getInterpretText(changePos.length);
+      document.getElementById('yarrowResult').innerHTML = html;
+      // 新增：自動丟給 ChatGPT
+      const prompt = html.replace(/<[^>]+>/g, '\n');
+      const url = `https://chat.openai.com/?prompt=${encodeURIComponent(prompt)}`;
+      window.open(url, '_blank');
+    }
+
+    // 進階互動揲蓍法
+    let yarrowStepCount = 0;
+    let yarrowLines = [];
+    function yarrowStep() {
+      if (yarrowStepCount >= 6) return;
+      const { remain, steps, yao } = yarrowThreeChanges();
+      let stepHtml = `<b>第${yarrowStepCount+1}爻（三變過程）：</b><br>`;
+      let left = 49;
+      steps.forEach((remove, i) => {
+        left -= remove;
+        stepHtml += `第${i+1}變：去除${remove}根，剩${left}根<br>`;
+      });
+      stepHtml += `三變後剩${remain}根，得：<b>${yao}</b><br><hr>`;
+      yarrowLines.push(yao);
+      yarrowStepCount++;
+      document.getElementById('yarrowStepArea').innerHTML += stepHtml;
+      if (yarrowStepCount < 6) {
+        document.getElementById('yarrowStepBtn').textContent = `開始第${yarrowStepCount+1}爻三變`;
+      } else {
+        document.getElementById('yarrowStepBtn').style.display = 'none';
+        document.getElementById('yarrowResetBtn').style.display = '';
+        showYarrowAdvancedResult();
+      }
+    }
+    function yarrowReset() {
+      yarrowStepCount = 0;
+      yarrowLines = [];
+      document.getElementById('yarrowStepArea').innerHTML = '';
+      document.getElementById('yarrowStepBtn').textContent = '開始第一爻三變';
+      document.getElementById('yarrowStepBtn').style.display = '';
+      document.getElementById('yarrowResetBtn').style.display = 'none';
+      document.getElementById('yarrowAdvancedResult').innerHTML = '';
+    }
+    function showYarrowAdvancedResult() {
+      const q = document.getElementById('question')?.value?.trim() || '';
+      let changed = yarrowLines.map(v=>v===6?7:v===9?8:v);
+      let changePos = yarrowLines.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
+      const baseInfo = getFullHexagramInfo(yarrowLines);
+      const changedInfo = getFullHexagramInfo(changed);
+      let html = `<b>本卦：</b> ${baseInfo.name}（${baseInfo.number}）<br>`;
+      if(baseInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${baseInfo.text}</div>`;
+      html += `<b>變卦：</b> ${changedInfo.name}（${changedInfo.number}）<br>`;
+      if(changedInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${changedInfo.text}</div>`;
+      html += '<b>本卦（由下往上）：</b><br>';
+      for(let i=5;i>=0;i--) html += yarrowLines[i]+'<br>';
+      html += '<b>變卦（由下往上）：</b><br>';
+      for(let i=5;i>=0;i--) html += changed[i]+'<br>';
+      html += '<b>六爻結果：</b> '+yarrowLines.join(', ')+'<br>';
+      html += '<b>變爻位置：</b> '+(changePos.length?changePos.join(', '):'無')+'<br>';
+      html += '<small>（6=老陰×，7=少陽，8=少陰，9=老陽○）</small>';
+      let yaoNames = ['初','二','三','四','五','上'];
+      let baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(baseInfo.number).padStart(2,'0')));
+      let changedJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(changedInfo.number).padStart(2,'0')));
+      let yaoKeys = Object.keys(guaData[baseJsonKey]?.['爻辭'] || {});
+      let changedYaoKeys = Object.keys(guaData[changedJsonKey]?.['爻辭'] || {});
+      html += getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys);
+      let interpret = getInterpretText(changePos.length);
+      document.getElementById('yarrowAdvancedResult').innerHTML = html;
+    }
+
+    // 共用：根據變爻數量顯示爻辭
+    function getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys) {
+      let html = '';
+      if (changePos.length > 0) {
+        html += `<div><b>變爻：</b>第${changePos.join('、')}爻</div>`;
+      } else {
+        html += `<div><b>變爻：</b>無</div>`;
+      }
+      
+      if ([1,2,4,5].includes(changePos.length)) {
+        html += `<div style='margin-top:8px;'><b>變爻爻辭：</b><ul style='margin:0 0 0 18px;padding:0;'>`;
+        if(changePos.length===2) {
+          let mainIdx = Math.max(...changePos)-1;
+          let subIdx = Math.min(...changePos)-1;
+          html += `<li><b>主</b>：第${mainIdx+1}爻：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[mainIdx]]||''}</li>`;
+          html += `<li><b>輔</b>：第${subIdx+1}爻：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[subIdx]]||''}</li>`;
+        } else if(changePos.length===4) {
+          let notChanged = [];
+          for(let i=0;i<6;i++) if(!changePos.includes(i+1)) notChanged.push(i+1);
+          let mainIdx = Math.min(...notChanged)-1;
+          let subIdx = Math.max(...notChanged)-1;
+          html += `<li><b>主</b>：第${mainIdx+1}爻：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[mainIdx]]||''}</li>`;
+          html += `<li><b>輔</b>：第${subIdx+1}爻：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[subIdx]]||''}</li>`;
+        } else if(changePos.length===5) {
+          let notChanged = [];
+          for(let i=0;i<6;i++) if(!changePos.includes(i+1)) notChanged.push(i+1);
+          let idx = notChanged[0]-1;
+          html += `<li>第${idx+1}爻：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[idx]]||''}</li>`;
+        } else if(changePos.length===1) {
+          let idx = changePos[0]-1;
+          html += `<li>第${idx+1}爻：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[idx]]||''}</li>`;
+        }
+        
+        html += `</ul></div>`;
+      }
+      html += `<div style='margin-top:8px;'><b>判讀方式：</b>${getInterpretText(changePos.length)}</div>`;
+      return html;
+    }
+    // 共用：根據變爻數量給出解讀建議
+    function getInterpretText(changePosLength) {
+      switch(changePosLength) {
+        case 0:
+          return '六爻不變：以本卦卦辭為主，代表局勢穩定。';
+        case 1:
+          return '一爻變：以本卦的變爻爻辭為主，提示當下關鍵。';
+        case 2:
+          return '二爻變：仍看本卦，以上爻為主，下爻為輔。';
+        case 3:
+          return '三爻變：以變卦卦辭為主，本卦為參考。';
+        case 4:
+          return '四爻變：看變卦中未變的下爻爻辭，輔以上爻。';
+        case 5:
+          return '五爻變：取變卦中唯一不變之爻為主。';
+        case 6:
+          return '六爻皆變：乾用「用九」、坤用「用六」，其餘則看變卦卦辭。';
+        default:
+          return '';
+      }
+    }
+    // 共用：取得變爻位置
+    function getChangePos(lines) {
+      return lines.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
+    }
+    // 共用：取得爻名陣列
+    function getYaoNames() {
+      return ['初','二','三','四','五','上'];
+    }
+    // 共用：本卦/變卦區塊顯示
+    function getHexagramBlock(info, label) {
+      let html = `<b>${label}：</b> ${info.name}（${info.number}）<br>`;
+      if(info.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${info.text}</div>`;
+      return html;
+    }
+    // 取得正式卦名、卦序號、卦辭的共用函數
+    function getFullHexagramInfo(lines) {
+      // 這裡假設 lines 為 6 個數字（6,7,8,9）
+      // 轉換為陰陽（1=陽，0=陰）
+      const lowerBinary = lines.slice(0,3).map(v=>(v===7||v===9)?1:0).join('');
+      const upperBinary = lines.slice(3,6).map(v=>(v===7||v===9)?1:0).join('');
+      const trigramBinary = ['111','000','001','010','011','100','101','110'];
+      const trigramNames = ['地','天','澤','火','雷','風','水','山'];
+      const lowerIdx = trigramBinary.indexOf(lowerBinary);
+      const upperIdx = trigramBinary.indexOf(upperBinary);
+      const baseKey = (lowerIdx>-1 && upperIdx>-1) ? trigramNames[upperIdx]+trigramNames[lowerIdx] : null;
+      let hexName = '未知', hexNum = '', hexText = '';
+      if(baseKey && typeof hexagramsMapping!=="undefined" && hexagramsMapping[baseKey]) {
+        hexName = hexagramsMapping[baseKey].name;
+        hexNum = hexagramsMapping[baseKey].number;
+        const baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(hexNum).padStart(2,'0')));
+        if(baseJsonKey && guaData[baseJsonKey]) {
+          hexText = guaData[baseJsonKey]['卦辭'] || '';
+        }
+      }
+      return {name: hexName, number: hexNum, text: hexText, key: baseKey};
+    }
+  </script>
+</body>
+</html> 
