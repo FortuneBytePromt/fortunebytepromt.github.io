@@ -4,54 +4,81 @@
   <meta charset="UTF-8">
   <title>易經揲蓍法專頁 | Fortune Byte</title>
   <style>
-    body { font-family: "Noto Sans TC", sans-serif; background: #f5f7fa; padding: 30px; }
-    .output { background: #fffaf0; border: 1px solid #e0e0e0; padding: 20px; border-radius: 10px; margin-top: 20px; }
-    button { padding: 10px 20px; border-radius: 20px; border: none; background: #3498db; color: #fff; font-size: 1em; cursor: pointer; }
-    button:hover { background: #2980b9; }
-    .section { background: white; padding: 25px; margin-bottom: 25px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-    h2 { margin-top: 0; }
+    body {
+      font-family: "Noto Sans TC", "Noto Serif TC", serif, sans-serif;
+      background: linear-gradient(135deg, #e8eaf6 0%, #f5e6c8 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      position: relative;
+      overflow-x: hidden;
+    }
+    .bg-overlay {
+      position: fixed;
+      z-index: 0;
+      left: 0; top: 0; width: 100vw; height: 100vh;
+      pointer-events: none;
+      background: url('https://www.transparenttextures.com/patterns/diamond-upholstery.png') repeat, linear-gradient(135deg, #e8eaf6 0%, #f5e6c8 100%);
+      opacity: 0.18;
+    }
+    .hexagram-card {
+      position: relative;
+      z-index: 1;
+      max-width: 480px;
+      margin: 48px auto 32px auto;
+      background: rgba(255,255,255,0.92);
+      border-radius: 24px;
+      box-shadow: 0 8px 32px #bfa76a33, 0 1.5px 0 #e0c97f44;
+      padding: 36px 28px 32px 28px;
+      backdrop-filter: blur(6px);
+      border: 2.5px solid #e0c97f88;
+    }
+    .hexagram-title {
+      text-align:center; font-size:2.1em; margin-bottom:0.2em; font-family: "Noto Serif TC", serif; font-weight: bold; letter-spacing: 2px;
+    }
+    .input-group label { font-weight: bold; font-size: 1.1em; }
+    .input-group textarea { font-size: 1.1em; border-radius: 8px; border: 1.5px solid #bfa76a; padding: 8px; margin-top: 6px; }
+    .ritual-section { margin-top: 18px; }
+    .ritual-progress { display: flex; justify-content: center; gap: 12px; margin: 18px 0 18px 0; }
+    .ritual-dot { width: 18px; height: 18px; border-radius: 50%; background: #e0c97f44; border: 2.5px solid #bfa76a; box-shadow: 0 0 8px #bfa76a33; transition: background 0.3s, border 0.3s; }
+    .ritual-dot.active { background: #bfa76a; border-color: #8d6e36; box-shadow: 0 0 16px #bfa76a88; }
+    .ritual-prayer { font-family: "Noto Serif TC", serif; color: #8d6e36; font-size: 1.25em; margin-bottom: 18px; text-align: center; letter-spacing: 2px; animation: fadeIn 1.2s; font-weight: bold; text-shadow: 0 2px 8px #fffbe6, 0 0 2px #bfa76a; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+    .yao-row { border-radius:8px;margin-bottom:10px;padding:8px 0 8px 0;background:rgba(255,255,255,0.7);box-shadow:0 2px 12px #bfa76a22;animation:fadeIn 0.7s; display: flex; align-items: center; gap: 8px; }
+    .yao-row-bian { border: 2px solid #e67e22 !important; background: linear-gradient(90deg, #fffbe6 60%, #ffe082 100%) !important; box-shadow: 0 0 16px #ffe08288 !important; animation: ritualGlow 1.2s; }
+    .yao-label { display:inline-block;width:3.5em;font-weight:bold; font-size: 1.1em; }
+    .yao-symbol { font-size:1.5em;font-family:monospace;font-weight:bold; }
+    .yao-type { font-weight:bold; }
+    .yao-extra { color:#e67e22;font-weight:bold; }
+    .yao-text { color:#888;font-size:0.98em; margin-left: 0.5em; }
+    .result-block { background: #fffbe6; border-radius: 12px; box-shadow: 0 2px 12px #bfa76a22; padding: 18px 18px 12px 18px; margin-top: 18px; font-size: 1.08em; }
+    .result-block b { color: #8d6e36; }
+    .copy-btn { background: #bfa76a; color: #fff; border: none; border-radius: 18px; padding: 6px 18px; font-size: 1em; margin: 0 0 10px 0; cursor: pointer; float: right; transition: background 0.2s; }
+    .copy-btn:hover { background: #8d6e36; }
+    @media (max-width: 600px) { .hexagram-card { max-width: 98vw; padding: 18px 4vw 18px 4vw; } .yao-label { width: 2.5em; } .result-block { font-size: 0.98em; } }
   </style>
   <script src="64gua.js"></script>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941"
     crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>🌿 易經揲蓍法專頁</h1>
-  <div class="section">
-    <h2>自動產生一卦</h2>
-    <div class="input-group">
+  <div class="bg-overlay"></div>
+  <main class="hexagram-card">
+    <h1 class="hexagram-title">🌿 易經揲蓍法專頁</h1>
+    <div class="input-group" style="margin-bottom:18px;">
       <label for="question">請輸入你的卜卦問題：</label>
       <textarea id="question" rows="2" style="width:100%;max-width:400px;"></textarea>
     </div>
-    <button onclick="generateYarrowHexagram()">🔮 自動產生一卦</button>
-    <div id="yarrowResult" class="output"></div>
-    <details style="margin-top:20px;">
-      <summary style="font-weight:bold;cursor:pointer;">點此展開揲蓍法詳細步驟說明</summary>
-      <div style="margin-top:10px;text-align:left;">
-        <h3>1. 蓍草準備：數量與預備</h3>
-        <p>傳統《易經》筮卦採用蓍草莖作為工具，一般需要準備 <b>50根蓍草</b>。正式起卦時先將50根蓍草取出1根不用，留下 <b>49根</b> 作為筮算之用。筮前靜心凝神，以示對占卜過程的重視。</p>
-        <h3>2. "三變"流程：初變、中變、終變</h3>
-        <ol>
-          <li><b>分二</b>：將49根蓍草隨機分成兩堆，象徵陰陽兩儀。</li>
-          <li><b>掛一</b>：從右手那堆取出1根，夾於指間。</li>
-          <li><b>揲四</b>：分別對左右兩堆進行"四根一數"的計數，取出餘數（若餘數為0則視為4）。</li>
-          <li><b>歸奇</b>：將所有餘數合併，象徵"歸奇於扐以象閏"。</li>
-        </ol>
-        <p>完成一次四營後，從原先49根中取走4、5、8或9根，剩餘蓍草再重複三次，稱為"三變"。</p>
-        <h3>3. 三次變化定爻：爻象計算與判讀</h3>
-        <p>三變後剩下24、28、32或36根，除以4得6、7、8、9，分別代表老陰、少陽、少陰、老陽。六爻由下往上排列，畫卦時以"—"為陽、"--"為陰，老陽○、老陰×標記。</p>
-        <h3>4. 六爻成卦：組成整體卦象</h3>
-        <p>六爻皆經三變，共十八次操作，得六個爻象，組成本卦。若有變爻（老陰、老陽），則陰陽互換得變卦。可參照卦辭、爻辭解讀。</p>
-      </div>
-    </details>
-  </div>
-  <div class="section">
-    <h2>進階互動揲蓍法</h2>
-    <div id="yarrowStepArea" class="output" style="margin-bottom:20px;"></div>
-    <button id="yarrowStepBtn" onclick="yarrowStep()">開始第一爻三變</button>
-    <button id="yarrowResetBtn" onclick="yarrowReset()" style="display:none;">重置</button>
-    <div id="yarrowAdvancedResult" class="output" style="margin-top:20px;"></div>
-  </div>
+    <section class="ritual-section">
+      <div class="ritual-progress" id="ritualProgress"></div>
+      <div id="ritualPrayer" class="ritual-prayer"></div>
+      <div id="ritualYaoArea"></div>
+      <button id="ritualStepBtn" class="ritual-btn" disabled>產生下一爻</button>
+      <button id="ritualResetBtn" class="ritual-btn" style="display:none;">重置</button>
+      <div id="ritualAdvancedResult" class="result-block" style="margin-top:20px;"></div>
+    </section>
+  </main>
+  <button id="ritualMusicBtn" class="ritual-music-btn" title="播放/暫停背景音樂">&#9835;</button>
   <script>
     // 揲蓍法三變流程
     function yarrowThreeChanges() {
@@ -71,95 +98,197 @@
       return {remain, steps, yao: remain/4};
     }
 
-    // 自動產生一卦
-    function generateYarrowHexagram() {
-      const q = document.getElementById('question')?.value?.trim() || '';
-      const yaoArr = [];
-      for(let i=0;i<6;i++) {
-        yaoArr.push(yarrowThreeChanges().yao);
+    // 狀態集中管理
+    const ritualState = {
+      lines: [],
+      stepCount: 0,
+      currentStep: 0
+    };
+    const yaoNames = ['初','二','三','四','五','上'];
+    const ritualPrayers = [
+      '請靜心凝神，準備開始第一爻。',
+      '請靜心凝神，準備開始第二爻。',
+      '請靜心凝神，準備開始第三爻。',
+      '請靜心凝神，準備開始第四爻。',
+      '請靜心凝神，準備開始第五爻。',
+      '請靜心凝神，準備開始第六爻。'
+    ];
+    // 問題欄位監聽，未填時按鈕禁用
+    document.getElementById('question').addEventListener('input', function() {
+      document.getElementById('ritualStepBtn').disabled = !this.value.trim();
+    });
+    // 產生下一爻
+    document.getElementById('ritualStepBtn').addEventListener('click', function() {
+      if (!document.getElementById('question').value.trim()) return;
+      if (ritualState.lines.length >= 6) return;
+      const yao = yarrowThreeChanges().yao;
+      ritualState.lines.push(yao);
+      updateRitualProgress();
+      showYaoRows();
+      document.getElementById('ritualPrayer').textContent = ritualPrayers[ritualState.lines.length] || '';
+      if (ritualState.lines.length === 6) {
+        this.style.display = 'none';
+        document.getElementById('ritualResetBtn').style.display = '';
+        showRitualAdvancedResult();
+        setTimeout(()=>{
+          document.getElementById('ritualAdvancedResult').scrollIntoView({behavior:'smooth', block:'center'});
+        }, 300);
       }
-      let lines = yaoArr.slice();
-      let changed = yaoArr.map(v=>v===6?7:v===9?8:v);
-      let changePos = yaoArr.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
-      const baseInfo = getFullHexagramInfo(lines);
+    });
+    // 重置
+    document.getElementById('ritualResetBtn').addEventListener('click', function() {
+      ritualState.lines = [];
+      ritualState.stepCount = 0;
+      ritualState.currentStep = 0;
+      document.getElementById('ritualYaoArea').innerHTML = '';
+      document.getElementById('ritualStepBtn').style.display = '';
+      document.getElementById('ritualStepBtn').textContent = '產生下一爻';
+      document.getElementById('ritualStepBtn').disabled = !document.getElementById('question').value.trim();
+      document.getElementById('ritualResetBtn').style.display = 'none';
+      document.getElementById('ritualAdvancedResult').innerHTML = '';
+      document.getElementById('ritualPrayer').textContent = ritualPrayers[0];
+      updateRitualProgress();
+    });
+    // 進度條
+    function updateRitualProgress() {
+      let html = '';
+      for(let i=0;i<6;i++) {
+        html += `<span class="ritual-dot${i<ritualState.lines.length?' active':''}"></span>`;
+      }
+      document.getElementById('ritualProgress').innerHTML = html;
+    }
+    // 顯示已產生的爻
+    function showYaoRows() {
+      let yaoHtml = '';
+      for(let i=0;i<ritualState.lines.length;i++) {
+        const v = ritualState.lines[i];
+        let yaoType = '', yaoSymbol = '', yaoColor = '', yaoExtra = '', yaoClass = 'yao-row';
+        if (v === 6) { yaoType = '老陰6'; yaoSymbol = '×'; yaoColor = '#1976d2'; yaoExtra = '（變爻）'; yaoClass += ' yao-row-bian'; }
+        else if (v === 7) { yaoType = '少陽7'; yaoSymbol = '━'; yaoColor = '#bfa76a'; }
+        else if (v === 8) { yaoType = '少陰8'; yaoSymbol = '━ ━'; yaoColor = '#1976d2'; }
+        else if (v === 9) { yaoType = '老陽9'; yaoSymbol = '○'; yaoColor = '#bfa76a'; yaoExtra = '（變爻）'; yaoClass += ' yao-row-bian'; }
+        // 爻名顯示格式
+        let yaoNameLabel = '';
+        if (i === 0) yaoNameLabel = yaoNames[i] + (v === 6 || v === 8 ? '六' : '九');
+        else if (i === 5) yaoNameLabel = yaoNames[i] + (v === 6 || v === 8 ? '六' : '九');
+        else yaoNameLabel = (v === 6 || v === 8 ? '六' : '九') + yaoNames[i];
+        // 爻辭
+        let baseInfo = getFullHexagramInfo(ritualState.lines);
+        let baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(baseInfo.number).padStart(2,'0')));
+        let yaoKeys = Object.keys(guaData[baseJsonKey]?.['爻辭'] || {});
+        let yaoText = guaData[baseJsonKey]?.['爻辭'][yaoKeys[i]] || '';
+        yaoHtml += `<div class="${yaoClass}">
+          <span class="yao-label">${yaoNameLabel}</span>
+          <span class="yao-symbol" style="color:${yaoColor};">${yaoSymbol}</span>
+          <span class="yao-type" style="color:${yaoColor};">${yaoType}</span>
+          <span class="yao-extra">${yaoExtra}</span>
+          <span class="yao-text">爻辭：${yaoText}</span>
+        </div>`;
+      }
+      document.getElementById('ritualYaoArea').innerHTML = yaoHtml;
+    }
+    // 一鍵複製
+    function copyResult() {
+      const el = document.getElementById('ritualAdvancedResult');
+      if (!el) return;
+      const text = el.innerText;
+      navigator.clipboard.writeText(text).then(()=>{
+        alert('已複製結果！');
+      });
+    }
+    // 六爻完成時顯示結果
+    function showRitualAdvancedResult() {
+      const q = document.getElementById('question')?.value?.trim() || '';
+      let changed = ritualState.lines.map(v=>v===6?7:v===9?8:v);
+      let changePos = ritualState.lines.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
+      const baseInfo = getFullHexagramInfo(ritualState.lines);
       const changedInfo = getFullHexagramInfo(changed);
-      let html = `<b>我想要卜問的問題是：</b> ${q||'...'}<br>`;
-      html += `<b>本卦：</b> ${baseInfo.name}（${baseInfo.number}）<br>`;
-      if(baseInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${baseInfo.text}</div>`;
-      html += `<b>變卦：</b> ${changedInfo.name}（${changedInfo.number}）<br>`;
-      if(changedInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${changedInfo.text}</div>`;
       let yaoNames = ['初','二','三','四','五','上'];
       let baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(baseInfo.number).padStart(2,'0')));
       let changedJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(changedInfo.number).padStart(2,'0')));
       let yaoKeys = Object.keys(guaData[baseJsonKey]?.['爻辭'] || {});
       let changedYaoKeys = Object.keys(guaData[changedJsonKey]?.['爻辭'] || {});
-      html += getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys);
+      // 取得變爻爻辭區塊
+      let yaoTextBlock = getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys);
+      // 取得判讀方式
       let interpret = getInterpretText(changePos.length);
-      document.getElementById('yarrowResult').innerHTML = html;
+      // 取得變爻名稱
+      let bianYao = changePos.length ? changePos.map(i => {
+        if (i === 1) {
+          return '初' + ((ritualState.lines[0] === 6 || ritualState.lines[0] === 8) ? '六' : '九');
+        } else if (i === 6) {
+          return '上' + ((ritualState.lines[5] === 6 || ritualState.lines[5] === 8) ? '六' : '九');
+        } else {
+          return ((ritualState.lines[i-1] === 6 || ritualState.lines[i-1] === 8) ? '六' : '九') + yaoNames[i-1];
+        }
+      }).join('、') : '無';
+      // 取得變爻爻辭（純文字）
+      let bianYaoText = '';
+      if ([1,2,4,5].includes(changePos.length)) {
+        if(changePos.length===2) {
+          let mainIdx = Math.max(...changePos)-1;
+          let subIdx = Math.min(...changePos)-1;
+          let mainLabel = '';
+          if (mainIdx === 0) mainLabel = '初' + ((ritualState.lines[0] === 6 || ritualState.lines[0] === 8) ? '六' : '九');
+          else if (mainIdx === 5) mainLabel = '上' + ((ritualState.lines[5] === 6 || ritualState.lines[5] === 8) ? '六' : '九');
+          else mainLabel = ((ritualState.lines[mainIdx] === 6 || ritualState.lines[mainIdx] === 8) ? '六' : '九') + yaoNames[mainIdx];
+          let subLabel = '';
+          if (subIdx === 0) subLabel = '初' + ((ritualState.lines[0] === 6 || ritualState.lines[0] === 8) ? '六' : '九');
+          else if (subIdx === 5) subLabel = '上' + ((ritualState.lines[5] === 6 || ritualState.lines[5] === 8) ? '六' : '九');
+          else subLabel = ((ritualState.lines[subIdx] === 6 || ritualState.lines[subIdx] === 8) ? '六' : '九') + yaoNames[subIdx];
+          bianYaoText = `主：${mainLabel}：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[mainIdx]]||''}\n輔：${subLabel}：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[subIdx]]||''}`;
+        } else if(changePos.length===4) {
+          let notChanged = [];
+          for(let i=0;i<6;i++) if(!changePos.includes(i+1)) notChanged.push(i+1);
+          let mainIdx = Math.min(...notChanged)-1;
+          let subIdx = Math.max(...notChanged)-1;
+          let mainLabel = '';
+          if (mainIdx === 0) mainLabel = '初' + ((changed[0] === 6 || changed[0] === 8) ? '六' : '九');
+          else if (mainIdx === 5) mainLabel = '上' + ((changed[5] === 6 || changed[5] === 8) ? '六' : '九');
+          else mainLabel = ((changed[mainIdx] === 6 || changed[mainIdx] === 8) ? '六' : '九') + yaoNames[mainIdx];
+          let subLabel = '';
+          if (subIdx === 0) subLabel = '初' + ((changed[0] === 6 || changed[0] === 8) ? '六' : '九');
+          else if (subIdx === 5) subLabel = '上' + ((changed[5] === 6 || changed[5] === 8) ? '六' : '九');
+          else subLabel = ((changed[subIdx] === 6 || changed[subIdx] === 8) ? '六' : '九') + yaoNames[subIdx];
+          bianYaoText = `主：${mainLabel}：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[mainIdx]]||''}\n輔：${subLabel}：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[subIdx]]||''}`;
+        } else if(changePos.length===5) {
+          let notChanged = [];
+          for(let i=0;i<6;i++) if(!changePos.includes(i+1)) notChanged.push(i+1);
+          let idx = notChanged[0]-1;
+          let label = '';
+          if (idx === 0) label = '初' + ((changed[0] === 6 || changed[0] === 8) ? '六' : '九');
+          else if (idx === 5) label = '上' + ((changed[5] === 6 || changed[5] === 8) ? '六' : '九');
+          else label = ((changed[idx] === 6 || changed[idx] === 8) ? '六' : '九') + yaoNames[idx];
+          bianYaoText = `${label}：${guaData[changedJsonKey]?.['爻辭'][changedYaoKeys[idx]]||''}`;
+        } else if(changePos.length===1) {
+          let idx = changePos[0]-1;
+          let label = '';
+          if (idx === 0) label = '初' + ((ritualState.lines[0] === 6 || ritualState.lines[0] === 8) ? '六' : '九');
+          else if (idx === 5) label = '上' + ((ritualState.lines[5] === 6 || ritualState.lines[5] === 8) ? '六' : '九');
+          else label = ((ritualState.lines[idx] === 6 || ritualState.lines[idx] === 8) ? '六' : '九') + yaoNames[idx];
+          bianYaoText = `${label}：${guaData[baseJsonKey]?.['爻辭'][yaoKeys[idx]]||''}`;
+        }
+      }
+      // 顯示區塊
+      let html = '';
+      html += `<button class='copy-btn' onclick='copyResult()'>複製</button>`;
+      html += `<div style='margin-bottom:8px;'><b>問題：</b> ${q||'...'}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>本卦：</b> ${baseInfo.name}（${baseInfo.number}）</div>`;
+      if(baseInfo.text) html += `<div style='color:#888;font-size:0.98em;margin-bottom:8px;'>卦辭：${baseInfo.text}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>變卦：</b> ${changedInfo.name}（${changedInfo.number}）</div>`;
+      if(changedInfo.text) html += `<div style='color:#888;font-size:0.98em;margin-bottom:8px;'>卦辭：${changedInfo.text}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>變爻位置：</b> ${changePos.length?changePos.join('、'):'無'}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>變爻：</b> ${bianYao}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>變爻爻辭：</b><br>${bianYaoText.replace(/\n/g,'<br>')||'無'}</div>`;
+      html += `<div style='margin-bottom:8px;'><b>判讀方式：</b>${interpret}</div>`;
+      document.getElementById('ritualAdvancedResult').innerHTML = html;
+      document.getElementById('ritualPrayer').textContent = '六爻已成，請靜心參悟。';
+      document.getElementById('ritualStepBtn').style.display = 'none';
+      document.getElementById('ritualResetBtn').style.display = '';
       // 新增：自動丟給 ChatGPT
-      const prompt = html.replace(/<[^>]+>/g, '\n');
+      const prompt = `問題：${q||'...'}\n本卦：${baseInfo.name}（${baseInfo.number}）\n卦辭：${baseInfo.text||''}\n變卦：${changedInfo.name}（${changedInfo.number}）\n卦辭：${changedInfo.text||''}\n變爻位置：${changePos.length?changePos.join('、'):'無'}\n變爻：${bianYao}\n變爻爻辭：\n${bianYaoText||'無'}\n判讀方式：${interpret}`;
       const url = `https://chat.openai.com/?prompt=${encodeURIComponent(prompt)}`;
       window.open(url, '_blank');
-    }
-
-    // 進階互動揲蓍法
-    let yarrowStepCount = 0;
-    let yarrowLines = [];
-    function yarrowStep() {
-      if (yarrowStepCount >= 6) return;
-      const { remain, steps, yao } = yarrowThreeChanges();
-      let stepHtml = `<b>第${yarrowStepCount+1}爻（三變過程）：</b><br>`;
-      let left = 49;
-      steps.forEach((remove, i) => {
-        left -= remove;
-        stepHtml += `第${i+1}變：去除${remove}根，剩${left}根<br>`;
-      });
-      stepHtml += `三變後剩${remain}根，得：<b>${yao}</b><br><hr>`;
-      yarrowLines.push(yao);
-      yarrowStepCount++;
-      document.getElementById('yarrowStepArea').innerHTML += stepHtml;
-      if (yarrowStepCount < 6) {
-        document.getElementById('yarrowStepBtn').textContent = `開始第${yarrowStepCount+1}爻三變`;
-      } else {
-        document.getElementById('yarrowStepBtn').style.display = 'none';
-        document.getElementById('yarrowResetBtn').style.display = '';
-        showYarrowAdvancedResult();
-      }
-    }
-    function yarrowReset() {
-      yarrowStepCount = 0;
-      yarrowLines = [];
-      document.getElementById('yarrowStepArea').innerHTML = '';
-      document.getElementById('yarrowStepBtn').textContent = '開始第一爻三變';
-      document.getElementById('yarrowStepBtn').style.display = '';
-      document.getElementById('yarrowResetBtn').style.display = 'none';
-      document.getElementById('yarrowAdvancedResult').innerHTML = '';
-    }
-    function showYarrowAdvancedResult() {
-      const q = document.getElementById('question')?.value?.trim() || '';
-      let changed = yarrowLines.map(v=>v===6?7:v===9?8:v);
-      let changePos = yarrowLines.map((v,i)=>v===6||v===9?i+1:null).filter(x=>x);
-      const baseInfo = getFullHexagramInfo(yarrowLines);
-      const changedInfo = getFullHexagramInfo(changed);
-      let html = `<b>本卦：</b> ${baseInfo.name}（${baseInfo.number}）<br>`;
-      if(baseInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${baseInfo.text}</div>`;
-      html += `<b>變卦：</b> ${changedInfo.name}（${changedInfo.number}）<br>`;
-      if(changedInfo.text) html += `<div style='color:#888;font-size:0.95em;'>卦辭：${changedInfo.text}</div>`;
-      html += '<b>本卦（由下往上）：</b><br>';
-      for(let i=5;i>=0;i--) html += yarrowLines[i]+'<br>';
-      html += '<b>變卦（由下往上）：</b><br>';
-      for(let i=5;i>=0;i--) html += changed[i]+'<br>';
-      html += '<b>六爻結果：</b> '+yarrowLines.join(', ')+'<br>';
-      html += '<b>變爻位置：</b> '+(changePos.length?changePos.join(', '):'無')+'<br>';
-      html += '<small>（6=老陰×，7=少陽，8=少陰，9=老陽○）</small>';
-      let yaoNames = ['初','二','三','四','五','上'];
-      let baseJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(baseInfo.number).padStart(2,'0')));
-      let changedJsonKey = Object.keys(typeof guaData!=="undefined"?guaData:{}).find(k=>k.startsWith(String(changedInfo.number).padStart(2,'0')));
-      let yaoKeys = Object.keys(guaData[baseJsonKey]?.['爻辭'] || {});
-      let changedYaoKeys = Object.keys(guaData[changedJsonKey]?.['爻辭'] || {});
-      html += getYaoTextBlock(changePos, baseInfo, changedInfo, guaData, baseJsonKey, changedJsonKey, yaoKeys, changedYaoKeys);
-      let interpret = getInterpretText(changePos.length);
-      document.getElementById('yarrowAdvancedResult').innerHTML = html;
     }
 
     // 共用：根據變爻數量顯示爻辭
