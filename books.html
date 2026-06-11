@@ -1,188 +1,295 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>易經推薦書籍與學習資源 | Fortune Byte</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      padding: 40px 0;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      color: #2c3e50;
-    }
-    .back-link {
-      display: inline-block;
-      padding: 10px 20px;
-      background: #3498db;
-      color: white;
-      text-decoration: none;
-      border-radius: 25px;
-      margin-top: 20px;
-      transition: background 0.3s ease;
-    }
-    .back-link:hover {
-      background: #2980b9;
-    }
-    .content-section {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .content-section h2 {
-      color: #2c3e50;
-      margin-bottom: 20px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #3498db;
-    }
-    .resource-list {
-      list-style: none;
-      padding: 0;
-    }
-    .resource-item {
-      margin-bottom: 25px;
-      padding: 20px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      border-left: 4px solid #3498db;
-      transition: transform 0.2s ease;
-    }
-    .resource-item:hover {
-      transform: translateX(10px);
-    }
-    .resource-title {
-      font-size: 1.2em;
-      color: #2c3e50;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-    .resource-description {
-      color: #666;
-      margin-bottom: 10px;
-      line-height: 1.6;
-    }
-    .resource-link {
-      color: #3498db;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
-    }
-    .resource-link:hover {
-      text-decoration: underline;
-    }
-    .resource-tag {
-      display: inline-block;
-      padding: 4px 8px;
-      background: #e8f4f8;
-      color: #3498db;
-      border-radius: 4px;
-      font-size: 0.9em;
-      margin-right: 8px;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: #7f8c8d;
-      margin-top: 40px;
-    }
-    @media (max-width: 768px) {
-      .header h1 {
-        font-size: 2em;
-      }
-      .content-section {
-        padding: 20px;
-      }
-      .resource-item {
-        padding: 15px;
-      }
-    }
-  </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941"
-    crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易經推薦書籍與學習資源 | Fortune Byte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #0e1120;
+    --deep:   #141829;
+    --card:   #1b2038;
+    --card2:  #1f2540;
+    --border: #2a3358;
+    --gold:   #c9a84c;
+    --gold-lt:#e8c97a;
+    --silver: #8fa0c0;
+    --text:   #dce4f5;
+    --muted:  #6b7fa8;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
+
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: var(--ink);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.75;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 18%, rgba(255,255,255,0.28) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 65% 22%, rgba(201,168,76,0.32) 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 70%, rgba(255,255,255,0.15) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .site-header {
+    padding: 48px 0 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
+
+  .site-header h1 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.9rem;
+    color: var(--gold-lt);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+
+  .site-header p { color: var(--muted); font-size: 0.9rem; font-weight: 300; }
+
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    color: var(--silver);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-top: 18px;
+    transition: border-color 0.2s, color 0.2s;
+  }
+
+  .back-btn:hover { border-color: var(--gold); color: var(--gold-lt); }
+
+  /* ── Section ── */
+  .section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 22px;
+    transition: border-color 0.2s;
+  }
+
+  .section:hover { border-color: #3d4e7a; }
+
+  .section-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.05rem;
+    color: var(--gold-lt);
+    letter-spacing: 0.05em;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
+
+  /* ── Resource cards ── */
+  .resource-list { list-style: none; display: flex; flex-direction: column; gap: 16px; }
+
+  .resource-item {
+    background: var(--deep);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: var(--radius-sm);
+    padding: 18px 20px;
+    transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .resource-item:hover {
+    transform: translateX(6px);
+    border-color: var(--gold);
+    box-shadow: 0 4px 20px rgba(201,168,76,0.1);
+  }
+
+  .resource-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1rem;
+    color: var(--text);
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+
+  .resource-desc {
+    font-size: 0.88rem;
+    color: var(--silver);
+    line-height: 1.7;
+    margin-bottom: 12px;
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    color: var(--gold);
+    border-radius: 20px;
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+  }
+
+  .resource-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--gold-lt);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-left: auto;
+    padding: 3px 12px;
+    border: 1px solid rgba(201,168,76,0.4);
+    border-radius: 20px;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .resource-link:hover {
+    background: rgba(201,168,76,0.12);
+    border-color: var(--gold);
+  }
+
+  /* ── Tip box ── */
+  .tip-box {
+    background: var(--deep);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 20px 22px;
+    font-size: 0.9rem;
+    color: var(--silver);
+    line-height: 1.8;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 1;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 600px) {
+    .tag-row { flex-direction: column; align-items: flex-start; }
+    .resource-link { margin-left: 0; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>📖 易經推薦書籍與學習資源</h1>
-      <a href="index.html" class="back-link">🔙 返回首頁</a>
-    </div>
+<div class="container">
 
-    <div class="content-section">
-      <h2>📚 學習資源推薦</h2>
+  <header class="site-header">
+    <h1>📖 學習資源推薦</h1>
+    <p>精選易經書籍與課程，助您深入易學智慧</p>
+    <a href="index.html" class="back-btn">← 返回首頁</a>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="section-title">📚 推薦學習資源</div>
       <ul class="resource-list">
+
         <li class="resource-item">
-          <div class="resource-title">傅佩榮老師 - 周易哲學（台大開放式課程）</div>
-          <div class="resource-description">
-            台大開放式課程中的周易哲學課程，由傅佩榮老師主講，深入淺出地講解易經的哲學思想。
+          <div class="resource-title">傅佩榮老師 — 周易哲學（台大開放式課程）</div>
+          <div class="resource-desc">
+            台大開放式課程中的周易哲學，由傅佩榮老師主講，深入淺出地講解易經的哲學思想，適合初學者建立系統認識。
           </div>
-          <span class="resource-tag">線上課程</span>
-          <span class="resource-tag">YouTube</span>
-          <a href="#" class="resource-link">→ 觀看課程</a>
+          <div class="tag-row">
+            <span class="tag">線上課程</span>
+            <span class="tag">YouTube</span>
+            <span class="tag">免費</span>
+            <a href="#" class="resource-link">→ 觀看課程</a>
+          </div>
         </li>
 
         <li class="resource-item">
-          <div class="resource-title">傅佩榮老師 - 64爻詳細解說</div>
-          <div class="resource-description">
-            傅佩榮老師在其YouTube頻道上，針對64爻進行了詳細的解說，適合想要深入理解易經的學習者。
+          <div class="resource-title">傅佩榮老師 — 64爻詳細解說</div>
+          <div class="resource-desc">
+            傅佩榮老師在 YouTube 頻道上針對 64 爻進行的完整解說，適合想要深入理解每一卦意涵的學習者。
           </div>
-          <span class="resource-tag">YouTube頻道</span>
-          <span class="resource-tag">進階學習</span>
-          <a href="#" class="resource-link">→ 觀看頻道</a>
+          <div class="tag-row">
+            <span class="tag">YouTube 頻道</span>
+            <span class="tag">進階學習</span>
+            <a href="#" class="resource-link">→ 觀看頻道</a>
+          </div>
         </li>
 
         <li class="resource-item">
-          <div class="resource-title">易學網 - 64爻文字解說</div>
-          <div class="resource-description">
-            易學網提供了完整的64爻文字解說，內容詳實，是很好的參考資料。
+          <div class="resource-title">易學網 — 64爻文字解說</div>
+          <div class="resource-desc">
+            提供完整的 64 爻文字解說，內容詳實，是查閱卦辭爻辭的好參考資源。
           </div>
-          <span class="resource-tag">網站資源</span>
-          <span class="resource-tag">文字解說</span>
-          <a href="#" class="resource-link">→ 瀏覽網站</a>
+          <div class="tag-row">
+            <span class="tag">網站資源</span>
+            <span class="tag">文字解說</span>
+            <a href="#" class="resource-link">→ 瀏覽網站</a>
+          </div>
         </li>
 
         <li class="resource-item">
-          <div class="resource-title">王溢嘉《易經101》</div>
-          <div class="resource-description">
-            這是一本很好的易經入門書籍，作者以現代的角度詮釋易經，讓讀者更容易理解易經的智慧。
+          <div class="resource-title">王溢嘉《易經 101》</div>
+          <div class="resource-desc">
+            以現代角度詮釋易經的入門書籍，語言平易近人，讓讀者更容易理解易經智慧在生活中的應用。
           </div>
-          <span class="resource-tag">書籍</span>
-          <span class="resource-tag">入門推薦</span>
-          <a href="#" class="resource-link">→ 查看書籍</a>
+          <div class="tag-row">
+            <span class="tag">書籍</span>
+            <span class="tag">入門推薦</span>
+            <a href="#" class="resource-link">→ 查看書籍</a>
+          </div>
         </li>
+
       </ul>
-    </div>
+    </section>
 
-    <div class="content-section">
-      <h2>💡 學習建議</h2>
-      <p style="color: #666; line-height: 1.6;">
-        以上推薦的學習資源，從入門到進階都有涵蓋。建議先從台大開放式課程開始，建立基礎概念後，再根據個人興趣選擇深入的方向。傅佩榮老師的講解深入淺出，特別適合初學者。如果想要更系統地學習，可以參考王溢嘉的《易經101》，這本書提供了很好的入門指引。
-      </p>
-    </div>
+    <section class="section">
+      <div class="section-title">💡 學習建議</div>
+      <div class="tip-box">
+        建議從台大開放式課程開始，建立基礎概念後再根據個人興趣選擇深入方向。傅佩榮老師的講解特別適合初學者。若想系統性入門，王溢嘉的《易經 101》是很好的起點。進階後可搭配易學網的文字資料，對照本站的占卜結果進行自我驗證。
+      </div>
+    </section>
+  </main>
 
-    <div class="footer">
-      <p>© 2024 Fortune Byte. All rights reserved.</p>
-    </div>
-  </div>
+</div>
+
+<footer class="site-footer">
+  <div class="container">© 2024 Fortune Byte · 易經占卜智慧平台</div>
+</footer>
 </body>
-</html> 
+</html>
