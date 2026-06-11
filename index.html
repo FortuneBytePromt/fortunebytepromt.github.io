@@ -1,133 +1,314 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fortune Byte - 易經占卜與智慧分享</title>
-  <style>
-    body {
-      font-family: "Noto Sans TC", sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 20px;
-    }
-    .header {
-      text-align: center;
-      padding: 40px 0;
-      background: rgba(255, 255, 255, 0.9);
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      color: #2c3e50;
-    }
-    .header p {
-      color: #7f8c8d;
-      margin: 10px 0 0;
-    }
-    .main-content {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 30px;
-      padding: 20px;
-    }
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 30px;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
-    .card h2 {
-      color: #2c3e50;
-      margin-top: 0;
-    }
-    .card p {
-      color: #7f8c8d;
-      margin-bottom: 25px;
-    }
-    .button {
-      display: inline-block;
-      padding: 12px 24px;
-      background: #3498db;
-      color: white;
-      text-decoration: none;
-      border-radius: 25px;
-      transition: background 0.3s ease;
-    }
-    .button:hover {
-      background: #2980b9;
-    }
-    .icon {
-      font-size: 3em;
-      margin-bottom: 20px;
-      color: #3498db;
-    }
-    .footer {
-      text-align: center;
-      padding: 20px;
-      color: #7f8c8d;
-      margin-top: 40px;
-    }
-    @media (max-width: 768px) {
-      .main-content {
-        grid-template-columns: 1fr;
-      }
-      .header h1 {
-        font-size: 2em;
-      }
-    }
-  </style>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941"
-   crossorigin="anonymous"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortune Byte — 易經占卜與智慧</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:    #0e1120;
+    --deep:   #141829;
+    --card:   #1b2038;
+    --border: #2a3358;
+    --gold:   #c9a84c;
+    --gold-lt:#e8c97a;
+    --silver: #8fa0c0;
+    --text:   #dce4f5;
+    --muted:  #6b7fa8;
+    --radius: 14px;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: var(--ink);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.7;
+  }
+
+  /* ── Stars background ── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 15% 20%, rgba(255,255,255,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 45% 8%,  rgba(255,255,255,0.25) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 72% 30%, rgba(201,168,76,0.4) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 15%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 30% 55%, rgba(255,255,255,0.2) 0%, transparent 100%),
+      radial-gradient(1px 1px at 60% 70%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 5%  80%, rgba(201,168,76,0.3) 0%, transparent 100%),
+      radial-gradient(1px 1px at 95% 60%, rgba(255,255,255,0.2) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Header ── */
+  .site-header {
+    padding: 60px 0 40px;
+    text-align: center;
+    position: relative;
+  }
+
+  .site-header::after {
+    content: '';
+    display: block;
+    width: 120px;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 28px auto 0;
+  }
+
+  .logo-glyph {
+    font-family: "Noto Serif TC", serif;
+    font-size: 3.2rem;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-lt) 50%, var(--gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .logo-en {
+    font-size: 0.75rem;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .tagline {
+    margin-top: 16px;
+    font-size: 1rem;
+    color: var(--silver);
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── Hexagram decorative row ── */
+  .hexagram-row {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+    margin: 36px 0;
+    opacity: 0.55;
+  }
+
+  .gua-symbol {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .gua-line {
+    width: 30px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .gua-line.broken {
+    background: transparent;
+    position: relative;
+  }
+
+  .gua-line.broken::before,
+  .gua-line.broken::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    height: 3px;
+    width: 12px;
+    background: var(--gold);
+    border-radius: 2px;
+  }
+
+  .gua-line.broken::before { left: 0; }
+  .gua-line.broken::after  { right: 0; }
+
+  /* ── Cards ── */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+    gap: 24px;
+    padding-bottom: 60px;
+  }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 36px 30px;
+    text-align: center;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .card:hover {
+    transform: translateY(-6px);
+    border-color: var(--gold);
+    box-shadow: 0 12px 40px rgba(201,168,76,0.12);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-icon {
+    font-size: 2.6rem;
+    margin-bottom: 18px;
+    display: block;
+    filter: drop-shadow(0 0 12px rgba(201,168,76,0.4));
+  }
+
+  .card h2 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--gold-lt);
+    margin-bottom: 12px;
+    letter-spacing: 0.06em;
+  }
+
+  .card p {
+    font-size: 0.9rem;
+    color: var(--silver);
+    margin-bottom: 28px;
+    line-height: 1.8;
+  }
+
+  .btn {
+    display: inline-block;
+    padding: 11px 26px;
+    background: linear-gradient(135deg, var(--gold) 0%, #a8742e 100%);
+    color: #0e1120;
+    text-decoration: none;
+    border-radius: 30px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    letter-spacing: 0.04em;
+    transition: filter 0.2s, transform 0.2s;
+  }
+
+  .btn:hover {
+    filter: brightness(1.12);
+    transform: translateY(-1px);
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.03em;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 640px) {
+    .logo-glyph { font-size: 2.4rem; }
+    .cards { grid-template-columns: 1fr; gap: 16px; }
+    .card { padding: 28px 22px; }
+  }
+</style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <h1>🔮 Fortune Byte</h1>
-      <p>探索易經智慧，開啟人生新視野</p>
+<div class="container">
+
+  <header class="site-header">
+    <div class="logo-glyph">☯ Fortune Byte</div>
+    <div class="logo-en">Yi Jing · Wisdom · Divination</div>
+    <p class="tagline">探索易經智慧，開啟人生新視野</p>
+  </header>
+
+  <!-- Decorative hexagrams -->
+  <div class="hexagram-row" aria-hidden="true">
+    <!-- 乾 ䷀ -->
+    <div class="gua-symbol">
+      <div class="gua-line"></div><div class="gua-line"></div><div class="gua-line"></div>
+      <div class="gua-line"></div><div class="gua-line"></div><div class="gua-line"></div>
     </div>
-
-    <div class="main-content">
-      <div class="card">
-        <div class="icon">🧙‍♂️</div>
-        <h2>易經數字卦占卜</h2>
-        <p>透過易經數字卦，為您解答人生疑惑，指引前進方向。</p>
-        <a href="fortune.html" class="button">開始占卜</a>
-      </div>
-
-      <div class="card">
-        <div class="icon">📚</div>
-        <h2>易經智慧文章</h2>
-        <p>深入淺出的易經解析，帶您領略傳統智慧的精髓。</p>
-        <a href="articles.html" class="button">閱讀文章</a>
-      </div>
-
-      <div class="card">
-        <div class="icon">📖</div>
-        <h2>推薦書籍</h2>
-        <p>精選易經相關書籍，助您更深入理解易經智慧。</p>
-        <a href="books.html" class="button">查看推薦</a>
-      </div>
+    <!-- 坤 ䷁ -->
+    <div class="gua-symbol">
+      <div class="gua-line broken"></div><div class="gua-line broken"></div><div class="gua-line broken"></div>
+      <div class="gua-line broken"></div><div class="gua-line broken"></div><div class="gua-line broken"></div>
     </div>
-
-    <div class="footer">
-      <p>© 2024 Fortune Byte. All rights reserved.</p>
+    <!-- 水雷屯 -->
+    <div class="gua-symbol">
+      <div class="gua-line"></div><div class="gua-line broken"></div><div class="gua-line broken"></div>
+      <div class="gua-line broken"></div><div class="gua-line broken"></div><div class="gua-line"></div>
+    </div>
+    <!-- 山水蒙 -->
+    <div class="gua-symbol">
+      <div class="gua-line broken"></div><div class="gua-line broken"></div><div class="gua-line"></div>
+      <div class="gua-line"></div><div class="gua-line broken"></div><div class="gua-line broken"></div>
+    </div>
+    <!-- 水天需 -->
+    <div class="gua-symbol">
+      <div class="gua-line"></div><div class="gua-line broken"></div><div class="gua-line broken"></div>
+      <div class="gua-line"></div><div class="gua-line"></div><div class="gua-line"></div>
     </div>
   </div>
+
+  <main class="cards">
+    <div class="card">
+      <span class="card-icon">🔮</span>
+      <h2>易經數字卦占卜</h2>
+      <p>透過易經數字卦，以三個數字起卦，解析人生疑惑，指引前進方向。</p>
+      <a href="fortune.html" class="btn">開始占卜</a>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">📜</span>
+      <h2>易經智慧文章</h2>
+      <p>深入淺出的易經解析，帶您領略千年傳統智慧的精髓與現代應用。</p>
+      <a href="articles.html" class="btn">閱讀文章</a>
+    </div>
+
+    <div class="card">
+      <span class="card-icon">📚</span>
+      <h2>推薦書籍</h2>
+      <p>精選易經相關書籍，無論初學或深造，助您系統性掌握易學精要。</p>
+      <a href="books.html" class="btn">查看推薦</a>
+    </div>
+  </main>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">
+    © 2024 Fortune Byte · 易經占卜智慧平台 · All rights reserved.
+  </div>
+</footer>
 </body>
 </html>
