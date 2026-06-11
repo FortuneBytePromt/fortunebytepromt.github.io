@@ -1,191 +1,234 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FortuneByte - 文章列表</title>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #34495e;
-            --accent-color: #3498db;
-            --text-color: #333;
-            --light-bg: #f5f6fa;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>易經文章列表 | Fortune Byte</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@300;400;500&display=swap" rel="stylesheet">
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941" crossorigin="anonymous"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  :root {
+    --ink:    #0e1120;
+    --deep:   #141829;
+    --card:   #1b2038;
+    --card2:  #1f2540;
+    --border: #2a3358;
+    --gold:   #c9a84c;
+    --gold-lt:#e8c97a;
+    --silver: #8fa0c0;
+    --text:   #dce4f5;
+    --muted:  #6b7fa8;
+    --radius: 14px;
+    --radius-sm: 8px;
+  }
 
-        body {
-            font-family: 'Microsoft JhengHei', 'PingFang TC', sans-serif;
-            line-height: 1.6;
-            color: var(--text-color);
-            background-color: var(--light-bg);
-        }
+  body {
+    font-family: "Noto Sans TC", sans-serif;
+    background: var(--ink);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.75;
+  }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 18% 12%, rgba(255,255,255,0.3) 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 70% 20%, rgba(201,168,76,0.35) 0%, transparent 100%),
+      radial-gradient(1px 1px at 42% 65%, rgba(255,255,255,0.15) 0%, transparent 100%),
+      radial-gradient(1px 1px at 88% 75%, rgba(255,255,255,0.18) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
 
-        header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 2rem 0;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+    position: relative;
+    z-index: 1;
+  }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 1rem;
-        }
+  /* ── Header ── */
+  .site-header {
+    padding: 48px 0 32px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 36px;
+  }
 
-        .category-section {
-            background: white;
-            border-radius: 10px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+  .site-header h1 {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.9rem;
+    color: var(--gold-lt);
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
 
-        .category-title {
-            color: var(--primary-color);
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--accent-color);
-        }
+  .site-header p {
+    color: var(--muted);
+    font-size: 0.9rem;
+    font-weight: 300;
+  }
 
-        .article-list {
-            list-style: none;
-        }
+  .back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 20px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 30px;
+    color: var(--silver);
+    text-decoration: none;
+    font-size: 0.85rem;
+    margin-top: 18px;
+    transition: border-color 0.2s, color 0.2s;
+  }
 
-        .article-item {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background: var(--light-bg);
-            border-radius: 5px;
-            transition: transform 0.2s;
-        }
+  .back-btn:hover { border-color: var(--gold); color: var(--gold-lt); }
 
-        .article-item:hover {
-            transform: translateX(10px);
-        }
+  /* ── Category sections ── */
+  .category {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px;
+    margin-bottom: 22px;
+    transition: border-color 0.2s;
+  }
 
-        .article-link {
-            color: var(--secondary-color);
-            text-decoration: none;
-            display: block;
-            font-size: 1.1rem;
-        }
+  .category:hover { border-color: #3d4e7a; }
 
-        .article-link:hover {
-            color: var(--accent-color);
-        }
+  .category-title {
+    font-family: "Noto Serif TC", serif;
+    font-size: 1.05rem;
+    color: var(--gold-lt);
+    letter-spacing: 0.05em;
+    margin-bottom: 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-        .article-date {
-            font-size: 0.9rem;
-            color: #666;
-            margin-top: 0.5rem;
-        }
+  .category-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 8px;
+  }
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
+  /* ── Article list ── */
+  .article-list { list-style: none; }
 
-            h1 {
-                font-size: 2rem;
-            }
+  .article-item {
+    border-bottom: 1px solid rgba(42,51,88,0.6);
+    transition: background 0.15s;
+  }
 
-            .category-section {
-                padding: 1.5rem;
-            }
-        }
-    </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5479456509868941"
-      crossorigin="anonymous"></script>
+  .article-item:last-child { border-bottom: none; }
+
+  .article-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 13px 10px;
+    color: var(--silver);
+    text-decoration: none;
+    font-size: 0.95rem;
+    border-radius: var(--radius-sm);
+    transition: color 0.2s, background 0.2s, padding-left 0.2s;
+  }
+
+  .article-link::before {
+    content: '卦';
+    font-family: "Noto Serif TC", serif;
+    font-size: 0.7rem;
+    color: var(--gold);
+    background: rgba(201,168,76,0.1);
+    border: 1px solid rgba(201,168,76,0.3);
+    border-radius: 4px;
+    padding: 2px 6px;
+    flex-shrink: 0;
+    letter-spacing: 0;
+  }
+
+  .article-item:nth-child(-n+2) .article-link::before { content: '例'; }
+
+  .article-link:hover {
+    color: var(--gold-lt);
+    background: rgba(201,168,76,0.05);
+    padding-left: 16px;
+  }
+
+  /* ── Footer ── */
+  .site-footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 0 40px;
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.8rem;
+    position: relative;
+    z-index: 1;
+    margin-top: 10px;
+  }
+</style>
 </head>
 <body>
-    <header>
-        <div class="container">
-            <h1>FortuneByte 文章列表</h1>
-            <p>探索易經、占卜與生活智慧</p>
-        </div>
-    </header>
+<div class="container">
 
-    <main class="container">
-        <!-- 易經內容深度學習 -->
-        <section class="category-section">
-            <h2 class="category-title">易經內容深度學習</h2>
-            <ul class="article-list">
-                <li class="article-item">
-                    <a href="Y_0001.html" class="article-link">易經基礎入門：64卦對照表</a>                  
-                </li>
-                <li class="article-item">
-                    <a href="Y_0002.html" class="article-link">卦辭爻辭：乾卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0003.html" class="article-link">卦辭爻辭：兌卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0004.html" class="article-link">卦辭爻辭：離卦行</a>                    
-                </li>                
-                <li class="article-item">
-                    <a href="Y_0005.html" class="article-link">卦辭爻辭：震卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0006.html" class="article-link">卦辭爻辭：巽卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0007.html" class="article-link">卦辭爻辭：坎卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0008.html" class="article-link">卦辭爻辭：艮卦行</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="Y_0009.html" class="article-link">卦辭爻辭：坤卦行</a>
-                </li>
-                <!-- 更多文章將在此添加 -->
-            </ul>
-        </section>
+  <header class="site-header">
+    <h1>📜 易經智慧文章</h1>
+    <p>探索易經、占卜實例與生活智慧</p>
+    <a href="index.html" class="back-btn">← 返回首頁</a>
+  </header>
 
-        <!-- 占卜實例驗證 -->
-        <section class="category-section">
-            <h2 class="category-title">占卜實例驗證</h2>
-            <ul class="article-list">
-                <li class="article-item">
-                    <a href="E_0001.html" class="article-link">占卜案例分享1 審核結果的驗證</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="E_0002.html" class="article-link">占卜案例：信任的抉擇</a>                    
-                </li>
-                <!-- 更多文章將在此添加 -->
-            </ul>
-        </section>
+  <main>
+    <!-- 易經深度學習 -->
+    <section class="category">
+      <div class="category-title">📘 易經內容深度學習</div>
+      <ul class="article-list">
+        <li class="article-item"><a href="Y_0001.html" class="article-link">易經基礎入門：64卦對照表</a></li>
+        <li class="article-item"><a href="Y_0002.html" class="article-link">卦辭爻辭：乾卦行</a></li>
+        <li class="article-item"><a href="Y_0003.html" class="article-link">卦辭爻辭：兌卦行</a></li>
+        <li class="article-item"><a href="Y_0004.html" class="article-link">卦辭爻辭：離卦行</a></li>
+        <li class="article-item"><a href="Y_0005.html" class="article-link">卦辭爻辭：震卦行</a></li>
+        <li class="article-item"><a href="Y_0006.html" class="article-link">卦辭爻辭：巽卦行</a></li>
+        <li class="article-item"><a href="Y_0007.html" class="article-link">卦辭爻辭：坎卦行</a></li>
+        <li class="article-item"><a href="Y_0008.html" class="article-link">卦辭爻辭：艮卦行</a></li>
+        <li class="article-item"><a href="Y_0009.html" class="article-link">卦辭爻辭：坤卦行</a></li>
+      </ul>
+    </section>
 
-        <!-- 隨手記 -->
-        <section class="category-section">
-            <h2 class="category-title">隨手記</h2>
-            <ul class="article-list">
-                <li class="article-item">
-                    <a href="F_0001.html" class="article-link">為什麼要使用數字卦系統</a>                    
-                </li>
-                <li class="article-item">
-                    <a href="F_0002.html" class="article-link">六十四卦的排列奧秘</a>                    
-                </li>
-                <!-- 更多文章將在此添加 -->
-            </ul>
-        </section>
-    </main>
+    <!-- 占卜實例 -->
+    <section class="category">
+      <div class="category-title">🔮 占卜實例驗證</div>
+      <ul class="article-list" id="exampleList">
+        <li class="article-item"><a href="E_0001.html" class="article-link" style="--before:'例'">占卜案例分享 1：審核結果的驗證</a></li>
+        <li class="article-item"><a href="E_0002.html" class="article-link">占卜案例：信任的抉擇</a></li>
+      </ul>
+    </section>
 
-    <footer class="container" style="text-align: center; padding: 2rem 0; color: #666;">
-        <p>© 2024 FortuneByte. All rights reserved.</p>
-    </footer>
+    <!-- 隨手記 -->
+    <section class="category">
+      <div class="category-title">✍️ 隨手記</div>
+      <ul class="article-list">
+        <li class="article-item"><a href="F_0001.html" class="article-link">為什麼要使用數字卦系統</a></li>
+        <li class="article-item"><a href="F_0002.html" class="article-link">六十四卦的排列奧秘</a></li>
+      </ul>
+    </section>
+  </main>
+
+</div>
+
+<footer class="site-footer">
+  <div class="container">© 2024 Fortune Byte · 易經占卜智慧平台</div>
+</footer>
 </body>
 </html>
